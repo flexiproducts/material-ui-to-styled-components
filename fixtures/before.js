@@ -17,3 +17,6 @@ function App() {
         <span className={classes.second}>Hello</span>
     </div>
 }
+
+// exclude
+console.log('test')

@@ -8,10 +8,10 @@ import {
     variableDeclarator,
     identifier,
     taggedTemplateExpression,
-    memberExpression,
-    callExpression,
+    memberExpression,   
     templateLiteral,
     templateElement,
+    jsxElement,
   } from "@babel/types";
 
 const babelOptions: ParserOptions = {
@@ -28,32 +28,47 @@ const babelOptions: ParserOptions = {
 
 
 const code = readFileSync('./fixtures/before.js', 'utf-8')
-console.log('input')
+console.log('INPUT')
 console.log(code)
 console.log()
 
 const ast = parse(code, babelOptions)
 
-const styledComponents = []
+const styledComponents = {}
 
 traverse(ast, {
     VariableDeclaration: (enter) => {
-        if ((<any>enter.node.declarations[0].id)?.name === 'useStyles') {
-            const classDefinitions = getClassDefinitions(enter.node)
-            for (const property of classDefinitions.properties) {
-                const componentName = capitalize(property.key.name)
-                const css = getCssProperties(property.value.properties)
-                styledComponents.push(generateStyledComponent(componentName, css))
-            }
+        if (getVariableDeclarationName(enter.node) !== 'useStyles') return
 
-            enter.remove()
+        const classDefinitions = getClassDefinitions(enter.node)
+        for (const property of classDefinitions.properties) {
+            const className = property.key.name
+            const componentName = capitalize(className)
+            const css = getCssProperties(property.value.properties)
+            styledComponents[className] = {componentName, css}
         }
+
+        enter.remove()
+    },
+
+    MemberExpression: (enter) => {
+        // assuming useStyled creation happened before
+        if ((<any>enter.node.object).name !== 'classes') return
+        
+        const className = (<any> enter.node.property).name
+        const styledComponent = styledComponents[className]
+        const jsxElement: any = enter.parentPath.parentPath.parent
+        const elementType = jsxElement.name.name
+        if (styledComponent.elementType  && styledComponent.elementType  !== elementType) {
+            throw new Error('Class used on elements with different types, e.g. div and span')
+        }
+        styledComponent.elementType = elementType
     }
 })
 
 
-const output = generate(ast).code + '\n\n' + styledComponents.map(c => generate(c).code).join('\n\n')
-console.log('output')
+const output = generate(ast).code + '\n\n' + Object.values(styledComponents).map(generateStyledComponent).join('\n\n')
+console.log('OUTPUT')
 console.log(output)
 
 
@@ -71,6 +86,10 @@ Output
 function getClassDefinitions(node: any) {
     const functionBody: any = node.declarations[0].init
     return functionBody.arguments[0].body.arguments[0] //  e.g. {root: {color: blue}}
+}
+
+function getVariableDeclarationName(node) {
+    return (<any>node.declarations[0].id)?.name
 }
 
 function debug(ast) {
@@ -102,13 +121,13 @@ function generateStyleBlock (properties: Property[]) {
 
 type Property = { key: string; value: string };
 
-function generateStyledComponent(componentName: string, css: string) {
-    return variableDeclaration('const', [
+function generateStyledComponent({componentName, css, elementType}) {
+    return generate(variableDeclaration('const', [
         variableDeclarator(identifier(componentName),
             taggedTemplateExpression(
-                memberExpression(identifier('styled'), identifier('div')),
+                memberExpression(identifier('styled'), identifier(elementType)),
                 templateLiteral([templateElement({raw: css})], [])
             )),
-    ])
+    ])).code
 }
 
