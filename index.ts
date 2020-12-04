@@ -2,6 +2,7 @@ import { parse, ParserOptions } from "@babel/parser";
 import traverse from "@babel/traverse";
 import generate from '@babel/generator';
 import {readFileSync} from 'fs'
+import {capitalize, kebabCase} from 'lodash'
 
 const babelOptions: ParserOptions = {
     sourceType: "module",
@@ -21,11 +22,73 @@ const code = readFileSync('./fixtures/before.js', 'utf-8')
 const ast = parse(code, babelOptions)
 
 traverse(ast, {
-    VariableDeclaration: enter => {
-        enter.node.kind = 'const'
+    VariableDeclaration: (enter) => {
+        if ((<any>enter.node.declarations[0].id)?.name === 'useStyles') {
+            const classDefinitions = getClassDefinitions(enter.node)
+            for (const property of classDefinitions.properties) {
+                const ComponentName = capitalize(property.key.name)
+
+                const properties = getCssProperties(property.value.properties)
+                console.log(properties)
+                // debug(cssDefinitions)
+            }
+        }
+    },
+
+    enter(path) {
+        if (path.isIdentifier({ name: 'useStyles' })) {
+            path.node.name = 'mmep';
+        }
     }
 })
 
-const output = generate(ast, code)
-console.log(output.code)
+// const output = generate(ast)
+// console.log(output.code)
+
+
+/*
+Input
+```
+makeStyles((theme: Theme) => createStyles({...}));
+```
+
+Output
+```
+{...}
+```
+*/
+function getClassDefinitions(node: any) {
+    const functionBody: any = node.declarations[0].init
+    return functionBody.arguments[0].body.arguments[0] //  e.g. {root: {color: blue}}
+}
+
+function debug(ast) {
+    console.log(generate(ast).code)
+}
+
+
+function getCssProperties(cssDefinitions) {
+    const output = []
+    for (const cssObject of cssDefinitions) {
+        const key = cssObject.key.name
+        const value = cssObject.value.value
+        output.push({key, value})
+    }
+    return generateStyleBlock(output)
+}
+
+
+
+// from: https://github.com/Agreon/styco/blob/master/src/util/generateStyledComponent.ts
+function generateStyleBlock (properties: Property[]) {
+    let stringifiedStyles = properties.map(prop => {
+      return `  ${kebabCase(prop.key)}: ${prop.value}`;
+    });
+  
+    return `\n${stringifiedStyles.join(";\n")};\n`;
+  }
+
+
+  type Property = { key: string; value: string };
+
 
