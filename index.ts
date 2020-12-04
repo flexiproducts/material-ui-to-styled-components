@@ -71,6 +71,12 @@ traverse(ast, {
 
         jsxElement.name.name = styledComponent.componentName
         styledComponent.elementType = elementType
+    },
+
+    CallExpression: (enter) => {
+        if (enter.node.callee?.name === 'useStyles') {
+            enter.parentPath.parentPath.remove()
+        }
     }
 })
 
