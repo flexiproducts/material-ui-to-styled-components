@@ -12,6 +12,7 @@ import {
     templateLiteral,
     templateElement,
     jsxElement,
+    callExpression,
   } from "@babel/types";
 
 const babelOptions: ParserOptions = {
@@ -66,8 +67,10 @@ traverse(ast, {
         enter.parentPath.parentPath.remove()
 
         const fullJsxElement: any = enter.parentPath.parentPath.parentPath.parent
-        fullJsxElement.closingElement.name.name = styledComponent.componentName
         fullJsxElement.openingElement.name.name = styledComponent.componentName
+        if (fullJsxElement.closingElement) {
+            fullJsxElement.closingElement.name.name = styledComponent.componentName
+        }
 
         jsxElement.name.name = styledComponent.componentName
         styledComponent.elementType = elementType
@@ -139,9 +142,12 @@ function generateStyledComponent({componentName, css, elementType}) {
     return generate(variableDeclaration('const', [
         variableDeclarator(identifier(componentName),
             taggedTemplateExpression(
-                memberExpression(identifier('styled'), identifier(elementType)),
+                elementType[0] !== elementType[0].toLowerCase() ? 
+                    callExpression(identifier('styled'), [identifier(elementType)]) :
+                    memberExpression(identifier('styled'), identifier(elementType)),
                 templateLiteral([templateElement({raw: css})], [])
             )),
     ])).code
 }
+
 

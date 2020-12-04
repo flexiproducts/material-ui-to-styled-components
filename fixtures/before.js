@@ -6,6 +6,9 @@ const useStyles = makeStyles((theme: Theme) =>
     second: {
         backgroundColor: 'green',
         width: '100%'
+    },
+    third: {
+      fontSize: '12px'
     }
   })
 );
@@ -13,10 +16,12 @@ const useStyles = makeStyles((theme: Theme) =>
 function App() {
     const classes = useStyles()
 
-    return <div className={classes.first} open={true}>
-        <span className={classes.second}>Hello</span>
+    return <div className={classes.first}>
+        <span className={classes.second}>
+          <Button className={classes.third} inactive />
+        </span>
     </div>
 }
 
-// exclude
+
 console.log('test')
