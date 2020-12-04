@@ -59,9 +59,17 @@ traverse(ast, {
         const styledComponent = styledComponents[className]
         const jsxElement: any = enter.parentPath.parentPath.parent
         const elementType = jsxElement.name.name
+
         if (styledComponent.elementType  && styledComponent.elementType  !== elementType) {
             throw new Error('Class used on elements with different types, e.g. div and span')
         }
+        enter.parentPath.parentPath.remove()
+
+        const fullJsxElement: any = enter.parentPath.parentPath.parentPath.parent
+        fullJsxElement.closingElement.name.name = styledComponent.componentName
+        fullJsxElement.openingElement.name.name = styledComponent.componentName
+
+        jsxElement.name.name = styledComponent.componentName
         styledComponent.elementType = elementType
     }
 })

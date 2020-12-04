@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme: Theme) =>
 function App() {
     const classes = useStyles()
 
-    return <div className={classes.first}>
+    return <div className={classes.first} open={true}>
         <span className={classes.second}>Hello</span>
     </div>
 }
