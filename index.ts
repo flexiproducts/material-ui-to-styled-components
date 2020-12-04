@@ -3,6 +3,16 @@ import traverse from "@babel/traverse";
 import generate from '@babel/generator';
 import {readFileSync} from 'fs'
 import {capitalize, kebabCase} from 'lodash'
+import {
+    variableDeclaration,
+    variableDeclarator,
+    identifier,
+    taggedTemplateExpression,
+    memberExpression,
+    callExpression,
+    templateLiteral,
+    templateElement,
+  } from "@babel/types";
 
 const babelOptions: ParserOptions = {
     sourceType: "module",
@@ -18,6 +28,9 @@ const babelOptions: ParserOptions = {
 
 
 const code = readFileSync('./fixtures/before.js', 'utf-8')
+console.log('input')
+console.log(code)
+console.log()
 
 const ast = parse(code, babelOptions)
 
@@ -26,11 +39,10 @@ traverse(ast, {
         if ((<any>enter.node.declarations[0].id)?.name === 'useStyles') {
             const classDefinitions = getClassDefinitions(enter.node)
             for (const property of classDefinitions.properties) {
-                const ComponentName = capitalize(property.key.name)
-
-                const properties = getCssProperties(property.value.properties)
-                console.log(properties)
-                // debug(cssDefinitions)
+                const componentName = capitalize(property.key.name)
+                const css = getCssProperties(property.value.properties)
+                console.log('output')
+                debug(generateStyledComponent(componentName, css))
             }
         }
     },
@@ -89,6 +101,15 @@ function generateStyleBlock (properties: Property[]) {
   }
 
 
-  type Property = { key: string; value: string };
+type Property = { key: string; value: string };
 
+function generateStyledComponent(componentName: string, css: string) {
+    return variableDeclaration('const', [
+        variableDeclarator(identifier(componentName),
+            taggedTemplateExpression(
+                memberExpression(identifier('styled'), identifier('div')),
+                templateLiteral([templateElement({raw: css})], [])
+            )),
+    ])
+}
 
