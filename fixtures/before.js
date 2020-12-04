@@ -9,3 +9,11 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 );
+
+function App() {
+    const classes = useStyles()
+
+    return <div className={classes.first}>
+        <span className={classes.second}>Hello</span>
+    </div>
+}

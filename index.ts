@@ -34,6 +34,8 @@ console.log()
 
 const ast = parse(code, babelOptions)
 
+const styledComponents = []
+
 traverse(ast, {
     VariableDeclaration: (enter) => {
         if ((<any>enter.node.declarations[0].id)?.name === 'useStyles') {
@@ -41,21 +43,18 @@ traverse(ast, {
             for (const property of classDefinitions.properties) {
                 const componentName = capitalize(property.key.name)
                 const css = getCssProperties(property.value.properties)
-                console.log('output')
-                debug(generateStyledComponent(componentName, css))
+                styledComponents.push(generateStyledComponent(componentName, css))
             }
-        }
-    },
 
-    enter(path) {
-        if (path.isIdentifier({ name: 'useStyles' })) {
-            path.node.name = 'mmep';
+            enter.remove()
         }
     }
 })
 
-// const output = generate(ast)
-// console.log(output.code)
+
+const output = generate(ast).code + '\n\n' + styledComponents.map(c => generate(c).code).join('\n\n')
+console.log('output')
+console.log(output)
 
 
 /*
