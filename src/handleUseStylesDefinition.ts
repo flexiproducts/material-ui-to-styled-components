@@ -9,13 +9,16 @@ import {
   VariableDeclaration
 } from '@babel/types'
 import {camelCase} from 'lodash'
+import MagicString from 'magic-string'
 import genereateStyleBlock from './generateStyleBlock'
 import {StyledComponent} from './generateStyledComponent'
+import {removeNode} from './output'
 
 export type StyledComponentByClass = Record<string, StyledComponent>
 
 export default function handleUseStylesDefinition(
-  useStylesPath: NodePath<VariableDeclaration>
+  useStylesPath: NodePath<VariableDeclaration>,
+  output: MagicString
 ): StyledComponentByClass {
   const styledComponents = {}
   const classDefinitions = getClassDefinitions(useStylesPath.node)
@@ -43,7 +46,7 @@ export default function handleUseStylesDefinition(
     styledComponents[className] = {componentName, css, needsTheme}
   }
 
-  useStylesPath.remove()
+  removeNode(output, useStylesPath.node)
 
   return styledComponents
 }
