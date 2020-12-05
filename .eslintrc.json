@@ -1,0 +1,3 @@
+{
+    "extends": ["@flexi/eslint-config/typescript"]
+}
