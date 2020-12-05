@@ -66,7 +66,7 @@ traverse(ast, {
       styledComponent.elementType !== elementType
     ) {
       throw new Error(
-        'Class used on elements with different types, e.g. div and span'
+        `Class '${className}' used on elements with different types: ${styledComponent.elementType} and ${elementType}`
       )
     }
     enter.parentPath.parentPath.remove()
