@@ -7,7 +7,7 @@ import handleUseStylesDefinition, {
   StyledComponentByClass
 } from './src/handleUseStylesDefinition'
 import handleClassesUsage from './src/handleClassesUsage'
-import {isIdentifier} from '@babel/types'
+import {isIdentifier, isImportSpecifier} from '@babel/types'
 
 const babelOptions: ParserOptions = {
   sourceType: 'module',
@@ -48,16 +48,18 @@ traverse(ast, {
     path.parentPath.parentPath.remove()
   },
 
-  ImportDeclaration: (enter) => {
-    if (enter.node.source.value === '@material-ui/core') {
-      enter.node.specifiers = enter.node.specifiers.filter((specifier) => {
-        const importName = (<any>specifier)?.imported?.name
-        return !['makeStyles', 'createStyles', 'Theme'].includes(importName)
-      })
-      if (enter.node.specifiers.length === 0) {
-        enter.remove()
-      }
-    }
+  ImportDeclaration: (path) => {
+    if (path.node.source.value !== '@material-ui/core') return
+    path.node.specifiers = path.node.specifiers.filter((specifier) => {
+      if (!isImportSpecifier(specifier) || !isIdentifier(specifier.imported))
+        return true
+
+      const importName = specifier.imported.name
+      return !['makeStyles', 'createStyles', 'Theme'].includes(importName)
+    })
+
+    const noImportsLeft = path.node.specifiers.length === 0
+    if (noImportsLeft) path.remove()
   }
 })
 
