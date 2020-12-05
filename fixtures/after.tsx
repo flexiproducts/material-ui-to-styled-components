@@ -1,20 +1,31 @@
 import styled, {css} from 'styled-components'
-import React from 'react';
+import React from 'react'
 import { Button } from '@material-ui/core';
-import { DrawerToggleButton } from './lib';
-const someGlobal = '20px';
+import {DrawerToggleButton} from './lib'
+
+const someGlobal = '20px'
+
 
 function App() {
-  return <First>
-      <Second>
-        <Third inactive />
-        <StyledDrawerToggleButton toggle="off" />
+ 
+
+  return (
+    <First >
+      <Second >
+        <Third  inactive />
+        <StyledDrawerToggleButton
+          toggle="off"
+          
+        />
       </Second>
-    </First>;
+    </First>
+  )
 }
 
-export default App;
-console.log('test');
+export default App
+
+console.log('test')
+
 
 const First = styled.div`
   flex-grow: 1;

@@ -1,10 +1,13 @@
 import {NodePath} from '@babel/traverse'
 import {isJSXElement, isJSXIdentifier, MemberExpression} from '@babel/types'
+import MagicString from 'magic-string'
 import {StyledComponentByClass} from './handleUseStylesDefinition'
+import {removeNode, replaceNode} from './output'
 
 export default function handleClassesUsage(
   path: NodePath<MemberExpression>,
-  styledComponents: StyledComponentByClass
+  styledComponents: StyledComponentByClass,
+  output: MagicString
 ): void {
   const className = (<any>path.node.property).name
   const styledComponent = styledComponents[className]
@@ -19,7 +22,8 @@ export default function handleClassesUsage(
       `Class '${className}' used on elements with different types: ${styledComponent.elementType} and ${elementType}`
     )
   }
-  path.parentPath.parentPath.remove()
+
+  removeNode(output, path.parentPath.parentPath.node, false)
 
   const classNameLikeComponentName =
     jsxElement.name.name === styledComponent.componentName
@@ -28,15 +32,25 @@ export default function handleClassesUsage(
   }
 
   const fullJsxElement = path.parentPath.parentPath.parentPath.parent
+
   if (!isJSXElement(fullJsxElement)) return
   if (!isJSXIdentifier(fullJsxElement.openingElement.name)) return
 
-  fullJsxElement.openingElement.name.name = styledComponent.componentName
+  replaceNode(
+    output,
+    fullJsxElement.openingElement.name,
+    styledComponent.componentName
+  )
+
   if (fullJsxElement.closingElement) {
     if (!isJSXIdentifier(fullJsxElement.closingElement.name)) return
-    fullJsxElement.closingElement.name.name = styledComponent.componentName
+
+    replaceNode(
+      output,
+      fullJsxElement.closingElement.name,
+      styledComponent.componentName
+    )
   }
 
-  jsxElement.name.name = styledComponent.componentName
   styledComponent.elementType = elementType
 }

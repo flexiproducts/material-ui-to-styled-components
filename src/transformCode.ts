@@ -1,5 +1,4 @@
 import traverse from '@babel/traverse'
-import generate from '@babel/generator'
 import generateStyledComponent from './generateStyledComponent'
 import handleUseStylesDefinition, {
   StyledComponentByClass
@@ -7,9 +6,13 @@ import handleUseStylesDefinition, {
 import handleClassesUsage from './handleClassesUsage'
 import {isIdentifier, isImportSpecifier} from '@babel/types'
 import parse from './parse'
+import MagicString from 'magic-string'
+import {removeNode, replaceNode} from './output'
+import generate from '@babel/generator'
 
 export default function (code: string) {
   const ast = parse(code)
+  const output = new MagicString(code)
 
   let styledComponents: StyledComponentByClass = {}
 
@@ -17,7 +20,7 @@ export default function (code: string) {
     VariableDeclaration: (path) => {
       if (getVariableDeclarationName(path.node) !== 'useStyles') return
 
-      styledComponents = handleUseStylesDefinition(path)
+      styledComponents = handleUseStylesDefinition(path, output)
     },
 
     MemberExpression: (path) => {
@@ -25,14 +28,14 @@ export default function (code: string) {
       if (path.node.object.name !== 'classes') return
 
       // Assuming useStyled creation happened before
-      handleClassesUsage(path, styledComponents)
+      handleClassesUsage(path, styledComponents, output)
     },
 
     CallExpression: (path) => {
       if (!isIdentifier(path.node.callee)) return
       if (path.node.callee.name !== 'useStyles') return
 
-      path.parentPath.parentPath.remove()
+      removeNode(output, path.parentPath.parentPath.node)
     },
 
     ImportDeclaration: (path) => {
@@ -46,7 +49,11 @@ export default function (code: string) {
       })
 
       const noImportsLeft = path.node.specifiers.length === 0
-      if (noImportsLeft) path.remove()
+      if (noImportsLeft) {
+        removeNode(output, path.node)
+      } else {
+        replaceNode(output, path.node, generate(path.node).code)
+      }
     }
   })
 
@@ -54,14 +61,14 @@ export default function (code: string) {
     ({needsTheme}) => !needsTheme
   )
 
-  const output =
+  return (
     (noComponentWithTheme
       ? `import styled from 'styled-components'\n`
       : `import styled, {css} from 'styled-components'\n`) +
-    generate(ast).code +
+    output.toString() +
     '\n\n' +
     Object.values(styledComponents).map(generateStyledComponent).join('\n\n')
-  return output
+  )
 }
 
 function getVariableDeclarationName(node) {
