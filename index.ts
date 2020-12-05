@@ -1,4 +1,3 @@
-import {parse, ParserOptions} from '@babel/parser'
 import traverse from '@babel/traverse'
 import generate from '@babel/generator'
 import {readFileSync} from 'fs'
@@ -8,21 +7,11 @@ import handleUseStylesDefinition, {
 } from './src/handleUseStylesDefinition'
 import handleClassesUsage from './src/handleClassesUsage'
 import {isIdentifier, isImportSpecifier} from '@babel/types'
-
-const babelOptions: ParserOptions = {
-  sourceType: 'module',
-  plugins: [
-    'jsx',
-    'typescript',
-    ['decorators', {decoratorsBeforeExport: true}],
-    'classProperties',
-    'optionalChaining',
-    'nullishCoalescingOperator'
-  ]
-}
+import parse from './src/parse'
 
 const code = readFileSync('./fixtures/before.tsx', 'utf-8')
-const ast = parse(code, babelOptions)
+
+const ast = parse(code)
 
 let styledComponents: StyledComponentByClass = {}
 
@@ -74,6 +63,7 @@ const output =
   generate(ast).code +
   '\n\n' +
   Object.values(styledComponents).map(generateStyledComponent).join('\n\n')
+
 console.log(output)
 
 function getVariableDeclarationName(node) {
