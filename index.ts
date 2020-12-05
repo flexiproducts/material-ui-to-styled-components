@@ -3,18 +3,8 @@ import traverse from '@babel/traverse'
 import generate from '@babel/generator'
 import {readFileSync} from 'fs'
 import {camelCase, kebabCase} from 'lodash'
-import {
-  variableDeclaration,
-  variableDeclarator,
-  identifier,
-  taggedTemplateExpression,
-  memberExpression,
-  templateLiteral,
-  templateElement,
-  callExpression,
-  isLiteral,
-  isJSXElement
-} from '@babel/types'
+import {isLiteral, isJSXElement} from '@babel/types'
+import generateStyledComponent from './src/generateStyledComponent'
 
 const babelOptions: ParserOptions = {
   sourceType: 'module',
@@ -162,33 +152,3 @@ function generateStyleBlock(properties: Property[]) {
 }
 
 type Property = {key: string; value: string}
-
-function generateStyledComponent({
-  componentName,
-  css,
-  elementType,
-  needsTheme
-}) {
-  const styledFunction =
-    elementType[0] !== elementType[0].toLowerCase()
-      ? callExpression(identifier('styled'), [identifier(elementType)]) // styled(Button)
-      : memberExpression(identifier('styled'), identifier(elementType)) // styled.div
-
-  if (needsTheme) {
-    return `const ${componentName} = ${
-      generate(styledFunction).code
-    }(({theme}) => css\`${css}\`)`
-  }
-
-  return generate(
-    variableDeclaration('const', [
-      variableDeclarator(
-        identifier(componentName),
-        taggedTemplateExpression(
-          styledFunction,
-          templateLiteral([templateElement({raw: css})], [])
-        )
-      )
-    ])
-  ).code
-}
