@@ -88,6 +88,18 @@ traverse(ast, {
     if ((<any>enter.node.callee)?.name === 'useStyles') {
       enter.parentPath.parentPath.remove()
     }
+  },
+
+  ImportDeclaration: (enter) => {
+    if (enter.node.source.value === '@material-ui/core') {
+      enter.node.specifiers = enter.node.specifiers.filter((specifier) => {
+        const importName = specifier?.imported?.name
+        return !['makeStyles', 'createStyles', 'Theme'].includes(importName)
+      })
+      if (enter.node.specifiers.length === 0) {
+        enter.remove()
+      }
+    }
   }
 })
 
