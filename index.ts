@@ -41,10 +41,11 @@ traverse(ast, {
     handleClassesUsage(path, styledComponents)
   },
 
-  CallExpression: (enter) => {
-    if ((<any>enter.node.callee)?.name === 'useStyles') {
-      enter.parentPath.parentPath.remove()
-    }
+  CallExpression: (path) => {
+    if (!isIdentifier(path.node.callee)) return
+    if (path.node.callee.name !== 'useStyles') return
+
+    path.parentPath.parentPath.remove()
   },
 
   ImportDeclaration: (enter) => {
