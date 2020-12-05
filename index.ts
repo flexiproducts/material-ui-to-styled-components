@@ -7,6 +7,7 @@ import handleUseStylesDefinition, {
   StyledComponentByClass
 } from './src/handleUseStylesDefinition'
 import handleClassesUsage from './src/handleClassesUsage'
+import {isIdentifier} from '@babel/types'
 
 const babelOptions: ParserOptions = {
   sourceType: 'module',
@@ -33,10 +34,10 @@ traverse(ast, {
   },
 
   MemberExpression: (path) => {
-    // classes.second in <span className={classes.second}>
-    if ((<any>path.node.object).name !== 'classes') return
-    // assuming useStyled creation happened before
+    if (!isIdentifier(path.node.object)) return
+    if (path.node.object.name !== 'classes') return
 
+    // Assuming useStyled creation happened before
     handleClassesUsage(path, styledComponents)
   },
 
