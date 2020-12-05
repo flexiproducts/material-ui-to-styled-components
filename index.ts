@@ -28,10 +28,6 @@ const babelOptions: ParserOptions = {
 }
 
 const code = readFileSync('./fixtures/before.tsx', 'utf-8')
-console.log('INPUT')
-console.log(code)
-console.log()
-
 const ast = parse(code, babelOptions)
 
 const styledComponents = {}
@@ -93,7 +89,7 @@ traverse(ast, {
   ImportDeclaration: (enter) => {
     if (enter.node.source.value === '@material-ui/core') {
       enter.node.specifiers = enter.node.specifiers.filter((specifier) => {
-        const importName = specifier?.imported?.name
+        const importName = (<any>specifier)?.imported?.name
         return !['makeStyles', 'createStyles', 'Theme'].includes(importName)
       })
       if (enter.node.specifiers.length === 0) {
@@ -104,10 +100,10 @@ traverse(ast, {
 })
 
 const output =
+  `import styled from 'styled-components\n` +
   generate(ast).code +
   '\n\n' +
   Object.values(styledComponents).map(generateStyledComponent).join('\n\n')
-console.log('OUTPUT')
 console.log(output)
 
 /*
