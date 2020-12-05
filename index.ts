@@ -2,7 +2,7 @@ import { parse, ParserOptions } from "@babel/parser";
 import traverse from "@babel/traverse";
 import generate from '@babel/generator';
 import {readFileSync} from 'fs'
-import {capitalize, kebabCase} from 'lodash'
+import {capitalize, camelCase, kebabCase} from 'lodash'
 import {
     variableDeclaration,
     variableDeclarator,
@@ -11,8 +11,8 @@ import {
     memberExpression,   
     templateLiteral,
     templateElement,
-    jsxElement,
     callExpression,
+    isLiteral,
   } from "@babel/types";
 
 const babelOptions: ParserOptions = {
@@ -39,22 +39,25 @@ const styledComponents = {}
 
 traverse(ast, {
     VariableDeclaration: (enter) => {
+        // const useStyles = makeStyles((theme: Theme) =>  
         if (getVariableDeclarationName(enter.node) !== 'useStyles') return
 
         const classDefinitions = getClassDefinitions(enter.node)
         for (const property of classDefinitions.properties) {
             const className = property.key.name
-            const componentName = capitalize(className)
+            const componentName = className[0].toUpperCase() + camelCase(className).slice(1)
             const css = getCssProperties(property.value.properties)
-            styledComponents[className] = {componentName, css}
+            const needsTheme = css.includes('theme')
+            styledComponents[className] = {componentName, css, needsTheme}
         }
 
         enter.remove()
     },
 
     MemberExpression: (enter) => {
-        // assuming useStyled creation happened before
+        // classes.second in <span className={classes.second}>
         if ((<any>enter.node.object).name !== 'classes') return
+        // assuming useStyled creation happened before
         
         const className = (<any> enter.node.property).name
         const styledComponent = styledComponents[className]
@@ -118,7 +121,7 @@ function getCssProperties(cssDefinitions) {
     const output = []
     for (const cssObject of cssDefinitions) {
         const key = cssObject.key.name
-        const value = cssObject.value.value
+        const value = isLiteral(cssObject.value) ? cssObject.value.value : '${' + generate(cssObject.value).code + '}'
         output.push({key, value})
     }
     return generateStyleBlock(output)
@@ -138,13 +141,19 @@ function generateStyleBlock (properties: Property[]) {
 
 type Property = { key: string; value: string };
 
-function generateStyledComponent({componentName, css, elementType}) {
+function generateStyledComponent({componentName, css, elementType, needsTheme}) {
+    const styledFunction = elementType[0] !== elementType[0].toLowerCase() ? 
+    callExpression(identifier('styled'), [identifier(elementType)]) : // styled(Button)
+    memberExpression(identifier('styled'), identifier(elementType)) // styled.div
+
+    if (needsTheme) {
+        return `const ${componentName} = ${generate(styledFunction).code}(({theme}) => css\`${css}\``
+    }
+
     return generate(variableDeclaration('const', [
         variableDeclarator(identifier(componentName),
             taggedTemplateExpression(
-                elementType[0] !== elementType[0].toLowerCase() ? 
-                    callExpression(identifier('styled'), [identifier(elementType)]) :
-                    memberExpression(identifier('styled'), identifier(elementType)),
+                styledFunction,
                 templateLiteral([templateElement({raw: css})], [])
             )),
     ])).code
