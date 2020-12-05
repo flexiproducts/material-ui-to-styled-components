@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node -r @swc-node/register index.ts",
-    "test": "npm start > tmp-output.tsx && git diff --no-index -- fixtures/after.tsx tmp-output.tsx"
+    "test": "npm start > tmp-output.tsx && git diff --no-index -- fixtures/after.tsx tmp-output.tsx && rm tmp-output.tsx && echo 'No differences in output detected'"
   },
   "keywords": [],
   "author": "",
