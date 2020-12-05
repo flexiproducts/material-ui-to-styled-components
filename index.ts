@@ -12,8 +12,10 @@ import {
   templateLiteral,
   templateElement,
   callExpression,
-  isLiteral
+  isLiteral,
+  isJSXElement
 } from '@babel/types'
+import {isJsxElement} from 'typescript'
 
 const babelOptions: ParserOptions = {
   sourceType: 'module',
@@ -70,7 +72,9 @@ traverse(ast, {
     }
     enter.parentPath.parentPath.remove()
 
-    const fullJsxElement: any = enter.parentPath.parentPath.parentPath.parent
+    const fullJsxElement = enter.parentPath.parentPath.parentPath.parent
+    if (!isJSXElement(fullJsxElement)) return
+
     fullJsxElement.openingElement.name.name = styledComponent.componentName
     if (fullJsxElement.closingElement) {
       fullJsxElement.closingElement.name.name = styledComponent.componentName
@@ -100,7 +104,7 @@ traverse(ast, {
 })
 
 const output =
-  `import styled from 'styled-components\n` +
+  `import styled from 'styled-components'\n` +
   generate(ast).code +
   '\n\n' +
   Object.values(styledComponents).map(generateStyledComponent).join('\n\n')
@@ -163,7 +167,7 @@ function generateStyledComponent({
   if (needsTheme) {
     return `const ${componentName} = ${
       generate(styledFunction).code
-    }(({theme}) => css\`${css}\``
+    }(({theme}) => css\`${css}\`)`
   }
 
   return generate(
