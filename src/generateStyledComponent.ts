@@ -10,12 +10,17 @@ import {
   variableDeclarator
 } from '@babel/types'
 
-export default function generateStyledComponent({
-  componentName,
-  css,
-  elementType,
-  needsTheme
-}) {
+export type StyledComponent = {
+  componentName: string
+  css: string
+  elementType?: string
+  needsTheme: boolean
+}
+
+export default function generateStyledComponent(
+  styledComponent: StyledComponent
+): string {
+  const {componentName, css, elementType, needsTheme} = styledComponent
   const isCustomComponent = elementType[0] !== elementType[0].toLowerCase()
   const styledFunction = isCustomComponent
     ? callExpression(identifier('styled'), [identifier(elementType)]) // styled(Button)
