@@ -2,11 +2,11 @@ import {parse, ParserOptions} from '@babel/parser'
 import traverse from '@babel/traverse'
 import generate from '@babel/generator'
 import {readFileSync} from 'fs'
-import {isJSXElement} from '@babel/types'
 import generateStyledComponent from './src/generateStyledComponent'
 import handleUseStylesDefinition, {
   StyledComponentByClass
 } from './src/handleUseStylesDefinition'
+import handleClassesUsage from './src/handleClassesUsage'
 
 const babelOptions: ParserOptions = {
   sourceType: 'module',
@@ -23,7 +23,7 @@ const babelOptions: ParserOptions = {
 const code = readFileSync('./fixtures/before.tsx', 'utf-8')
 const ast = parse(code, babelOptions)
 
-let styledComponents: StyledComponentByClass
+let styledComponents: StyledComponentByClass = {}
 
 traverse(ast, {
   VariableDeclaration: (path) => {
@@ -32,41 +32,12 @@ traverse(ast, {
     styledComponents = handleUseStylesDefinition(path)
   },
 
-  MemberExpression: (enter) => {
+  MemberExpression: (path) => {
     // classes.second in <span className={classes.second}>
-    if ((<any>enter.node.object).name !== 'classes') return
+    if ((<any>path.node.object).name !== 'classes') return
     // assuming useStyled creation happened before
 
-    const className = (<any>enter.node.property).name
-    const styledComponent = styledComponents[className]
-    const jsxElement: any = enter.parentPath.parentPath.parent
-    const elementType = jsxElement.name.name
-
-    if (
-      styledComponent.elementType &&
-      styledComponent.elementType !== elementType
-    ) {
-      throw new Error(
-        `Class '${className}' used on elements with different types: ${styledComponent.elementType} and ${elementType}`
-      )
-    }
-    enter.parentPath.parentPath.remove()
-
-    // avoid name clash
-    if (jsxElement.name.name === styledComponent.componentName) {
-      styledComponent.componentName = 'Styled' + styledComponent.componentName
-    }
-
-    const fullJsxElement = enter.parentPath.parentPath.parentPath.parent
-    if (!isJSXElement(fullJsxElement)) return
-
-    fullJsxElement.openingElement.name.name = styledComponent.componentName
-    if (fullJsxElement.closingElement) {
-      fullJsxElement.closingElement.name.name = styledComponent.componentName
-    }
-
-    jsxElement.name.name = styledComponent.componentName
-    styledComponent.elementType = elementType
+    handleClassesUsage(path, styledComponents)
   },
 
   CallExpression: (enter) => {
