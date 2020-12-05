@@ -20,6 +20,10 @@ export default function handleUseStylesDefinition(
   const styledComponents = {}
   const classDefinitions = getClassDefinitions(useStylesPath.node)
 
+  if (!classDefinitions) {
+    throw new Error('Could not get class definitions from makeStyles')
+  }
+
   for (const property of classDefinitions.properties) {
     if (!isObjectProperty(property))
       throw new Error('useStyles definition has an unexpected property type')
@@ -44,7 +48,9 @@ export default function handleUseStylesDefinition(
   return styledComponents
 }
 
-function getClassDefinitions(node: VariableDeclaration): ObjectExpression {
+function getClassDefinitions(
+  node: VariableDeclaration
+): ObjectExpression | undefined {
   // const useStyles = makeStyles((theme: Theme) => createStyles({...}));
 
   const makeStylesFunction = node.declarations[0].init
