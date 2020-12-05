@@ -15,7 +15,6 @@ import {
   isLiteral,
   isJSXElement
 } from '@babel/types'
-import {isJsxElement} from 'typescript'
 
 const babelOptions: ParserOptions = {
   sourceType: 'module',
@@ -71,6 +70,11 @@ traverse(ast, {
       )
     }
     enter.parentPath.parentPath.remove()
+
+    // avoid name clash
+    if (jsxElement.name.name === styledComponent.componentName) {
+      styledComponent.componentName = 'Styled' + styledComponent.componentName
+    }
 
     const fullJsxElement = enter.parentPath.parentPath.parentPath.parent
     if (!isJSXElement(fullJsxElement)) return

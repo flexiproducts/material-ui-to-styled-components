@@ -1,5 +1,6 @@
 import React from 'react'
 import {Theme, makeStyles, createStyles, Button} from '@material-ui/core'
+import {DrawerToggleButton} from './lib'
 
 const someGlobal = '20px'
 
@@ -30,7 +31,10 @@ function App() {
     <div className={classes.first}>
       <span className={classes.second}>
         <Button className={classes.third} inactive />
-        <Button toggle="off" className={classes.drawerToggleButton} />
+        <DrawerToggleButton
+          toggle="off"
+          className={classes.drawerToggleButton}
+        />
       </span>
     </div>
   )
