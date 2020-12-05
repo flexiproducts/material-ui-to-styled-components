@@ -107,8 +107,14 @@ traverse(ast, {
   }
 })
 
+const noComponentWithTheme = Object.values(styledComponents).every(
+  ({needsTheme}) => !needsTheme
+)
+
 const output =
-  `import styled from 'styled-components'\n` +
+  (noComponentWithTheme
+    ? `import styled from 'styled-components'\n`
+    : `import styled, {css} from 'styled-components'\n`) +
   generate(ast).code +
   '\n\n' +
   Object.values(styledComponents).map(generateStyledComponent).join('\n\n')
