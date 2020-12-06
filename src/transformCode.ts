@@ -39,6 +39,13 @@ export default function (code: string) {
     },
 
     ImportDeclaration: (path) => {
+      if (path.node.source.value === 'react' && path.node.end) {
+        output.appendRight(
+          path.node.end,
+          `\nimport styled from 'styled-components'`
+        )
+      }
+
       if (path.node.source.value !== '@material-ui/core') return
       path.node.specifiers = path.node.specifiers.filter((specifier) => {
         if (!isImportSpecifier(specifier) || !isIdentifier(specifier.imported))
@@ -57,14 +64,7 @@ export default function (code: string) {
     }
   })
 
-  const noComponentWithTheme = Object.values(styledComponents).every(
-    ({needsTheme}) => !needsTheme
-  )
-
   return (
-    (noComponentWithTheme
-      ? `import styled from 'styled-components'\n`
-      : `import styled, {css} from 'styled-components'\n`) +
     output.toString() +
     '\n\n' +
     Object.values(styledComponents).map(generateStyledComponent).join('\n\n')

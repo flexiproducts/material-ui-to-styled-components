@@ -29,7 +29,7 @@ export default function generateStyledComponent(
   if (needsTheme) {
     return `const ${componentName} = ${
       generate(styledFunction).code
-    }(({theme}) => css\`${css}\`)`
+    }(({theme}) => \`${css}\`)`
   }
 
   return generate(

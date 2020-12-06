@@ -53834,6 +53834,10 @@ function transformCode_default(code) {
       removeNode(output4, path.parentPath.parentPath.node);
     },
     ImportDeclaration: (path) => {
+      if (path.node.source.value === "react" && path.node.end) {
+        output4.appendRight(path.node.end, `
+import styled from 'styled-components'`);
+      }
       if (path.node.source.value !== "@material-ui/core")
         return;
       path.node.specifiers = path.node.specifiers.filter((specifier) => {
@@ -53850,10 +53854,7 @@ function transformCode_default(code) {
       }
     }
   });
-  const noComponentWithTheme = Object.values(styledComponents).every(({needsTheme}) => !needsTheme);
-  return (noComponentWithTheme ? `import styled from 'styled-components'
-` : `import styled, {css} from 'styled-components'
-`) + output4.toString() + "\n\n" + Object.values(styledComponents).map(generateStyledComponent).join("\n\n");
+  return output4.toString() + "\n\n" + Object.values(styledComponents).map(generateStyledComponent).join("\n\n");
 }
 function getVariableDeclarationName(node) {
   return node.declarations[0].id?.name;

@@ -1,5 +1,5 @@
-import styled, {css} from 'styled-components'
 import React from 'react'
+import styled from 'styled-components'
 import { Button } from '@material-ui/core';
 import {DrawerToggleButton} from './lib'
 
@@ -43,7 +43,7 @@ const Third = styled(Button)`
   width: ${someGlobal};
 `;
 
-const StyledDrawerToggleButton = styled(DrawerToggleButton)(({theme}) => css`
+const StyledDrawerToggleButton = styled(DrawerToggleButton)(({theme}) => `
   margin: ${theme.spacing(2)};
   width: 50px;
 `)
