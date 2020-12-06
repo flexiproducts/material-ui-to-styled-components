@@ -53663,7 +53663,7 @@ function generateStyledComponent(styledComponent) {
   const isCustomComponent = elementType[0] !== elementType[0].toLowerCase();
   const styledFunction = isCustomComponent ? types.callExpression(types.identifier("styled"), [types.identifier(elementType)]) : types.memberExpression(types.identifier("styled"), types.identifier(elementType));
   if (needsTheme) {
-    return `const ${componentName} = ${generator.default(styledFunction).code}(({theme}) => css\`${css}\`)`;
+    return `const ${componentName} = ${generator.default(styledFunction).code}(({theme}) => \`${css}\`)`;
   }
   return generator.default(types.variableDeclaration("const", [
     types.variableDeclarator(types.identifier(componentName), types.taggedTemplateExpression(styledFunction, types.templateLiteral([types.templateElement({raw: css})], [])))
