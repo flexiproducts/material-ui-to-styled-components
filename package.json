@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "change-styled": "bin.js"
+  },
   "scripts": {
     "start": "node -r @swc-node/register index.ts",
-    "test": "npm start > tmp-output.tsx && git diff --no-index -- fixtures/after.tsx tmp-output.tsx && rm tmp-output.tsx && echo 'No differences in output detected'"
+    "test": "npm start > tmp-output.tsx && git diff --no-index -- fixtures/after.tsx tmp-output.tsx && rm tmp-output.tsx && echo 'No differences in output detected'",
+    "build": "esbuild update-files.ts --bundle --platform=node --outfile=bin.js"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +29,7 @@
     "@flexi/eslint-config": "git+https://github.com/flexiproducts/eslint-config.git",
     "@swc-node/register": "^1.0.2",
     "@types/node": "^14.14.10",
+    "esbuild": "^0.8.19",
     "eslint": "^7.14.0",
     "ts-node": "^9.1.0",
     "typescript": "^4.1.2"

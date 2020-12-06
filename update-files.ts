@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import {sync as glob} from 'fast-glob'
 import {readFileSync, writeFileSync} from 'fs'
 import transformCode from './src/transformCode'
@@ -12,8 +14,7 @@ const filesWithUseStyles = tsxFiles.filter(({content}) =>
 )
 
 filesWithUseStyles.forEach(({path, content}) => {
+  console.log('Changing', path, '...')
   writeFileSync(path, transformCode(content))
+  console.log('Done')
 })
-
-console.log('Changed:')
-filesWithUseStyles.forEach(({path}) => console.log(path))
