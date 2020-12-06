@@ -300,7 +300,7 @@ var require_stringify = __commonJS((exports2, module2) => {
     let stringify = (node, parent = {}) => {
       let invalidBlock = options.escapeInvalid && utils.isInvalidBrace(parent);
       let invalidNode = node.invalid === true && options.escapeInvalid === true;
-      let output = "";
+      let output4 = "";
       if (node.value) {
         if ((invalidBlock || invalidNode) && utils.isOpenOrClose(node)) {
           return "\\" + node.value;
@@ -312,10 +312,10 @@ var require_stringify = __commonJS((exports2, module2) => {
       }
       if (node.nodes) {
         for (let child of node.nodes) {
-          output += stringify(child);
+          output4 += stringify(child);
         }
       }
-      return output;
+      return output4;
     };
     return stringify(ast);
   };
@@ -778,7 +778,7 @@ var require_compile = __commonJS((exports2, module2) => {
       let invalidNode = node.invalid === true && options.escapeInvalid === true;
       let invalid = invalidBlock === true || invalidNode === true;
       let prefix = options.escapeInvalid === true ? "\\" : "";
-      let output = "";
+      let output4 = "";
       if (node.isOpen === true) {
         return prefix + node.value;
       }
@@ -806,10 +806,10 @@ var require_compile = __commonJS((exports2, module2) => {
       }
       if (node.nodes) {
         for (let child of node.nodes) {
-          output += walk(child, node);
+          output4 += walk(child, node);
         }
       }
-      return output;
+      return output4;
     };
     return walk(ast);
   };
@@ -1201,23 +1201,23 @@ var require_braces = __commonJS((exports2, module2) => {
   var expand = require_expand();
   var parse3 = require_parse();
   var braces = (input, options = {}) => {
-    let output = [];
+    let output4 = [];
     if (Array.isArray(input)) {
       for (let pattern of input) {
         let result = braces.create(pattern, options);
         if (Array.isArray(result)) {
-          output.push(...result);
+          output4.push(...result);
         } else {
-          output.push(result);
+          output4.push(result);
         }
       }
     } else {
-      output = [].concat(braces.create(input, options));
+      output4 = [].concat(braces.create(input, options));
     }
     if (options && options.expand === true && options.nodupes === true) {
-      output = [...new Set(output)];
+      output4 = [...new Set(output4)];
     }
-    return output;
+    return output4;
   };
   braces.parse = (input, options = {}) => parse3(input, options);
   braces.stringify = (input, options = {}) => {
@@ -1438,21 +1438,21 @@ var require_utils2 = __commonJS((exports2) => {
     return `${input.slice(0, idx)}\\${input.slice(idx)}`;
   };
   exports2.removePrefix = (input, state = {}) => {
-    let output = input;
-    if (output.startsWith("./")) {
-      output = output.slice(2);
+    let output4 = input;
+    if (output4.startsWith("./")) {
+      output4 = output4.slice(2);
       state.prefix = "./";
     }
-    return output;
+    return output4;
   };
   exports2.wrapOutput = (input, state = {}, options = {}) => {
     const prepend = options.contains ? "" : "^";
     const append = options.contains ? "" : "$";
-    let output = `${prepend}(?:${input})${append}`;
+    let output4 = `${prepend}(?:${input})${append}`;
     if (state.negated === true) {
-      output = `(?:^(?!${output}).*$)`;
+      output4 = `(?:^(?!${output4}).*$)`;
     }
-    return output;
+    return output4;
   };
 });
 
@@ -1926,32 +1926,32 @@ var require_parse2 = __commonJS((exports2, module2) => {
       token.prev = prev;
       token.parens = state.parens;
       token.output = state.output;
-      const output = (opts.capture ? "(" : "") + token.open;
+      const output4 = (opts.capture ? "(" : "") + token.open;
       increment("parens");
       push({type, value: value2, output: state.output ? "" : ONE_CHAR});
-      push({type: "paren", extglob: true, value: advance(), output});
+      push({type: "paren", extglob: true, value: advance(), output: output4});
       extglobs.push(token);
     };
     const extglobClose = (token) => {
-      let output = token.close + (opts.capture ? ")" : "");
+      let output4 = token.close + (opts.capture ? ")" : "");
       if (token.type === "negate") {
         let extglobStar = star;
         if (token.inner && token.inner.length > 1 && token.inner.includes("/")) {
           extglobStar = globstar(opts);
         }
         if (extglobStar !== star || eos() || /^\)+$/.test(remaining())) {
-          output = token.close = `)$))${extglobStar}`;
+          output4 = token.close = `)$))${extglobStar}`;
         }
         if (token.prev.type === "bos" && eos()) {
           state.negatedExtglob = true;
         }
       }
-      push({type: "paren", extglob: true, value, output});
+      push({type: "paren", extglob: true, value, output: output4});
       decrement("parens");
     };
     if (opts.fastpaths !== false && !/(^[*!]|[/()[\]{}"])/.test(input)) {
       let backslashes = false;
-      let output = input.replace(REGEX_SPECIAL_CHARS_BACKREF, (m, esc, chars, first, rest, index) => {
+      let output4 = input.replace(REGEX_SPECIAL_CHARS_BACKREF, (m, esc, chars, first, rest, index) => {
         if (first === "\\") {
           backslashes = true;
           return m;
@@ -1978,18 +1978,18 @@ var require_parse2 = __commonJS((exports2, module2) => {
       });
       if (backslashes === true) {
         if (opts.unescape === true) {
-          output = output.replace(/\\/g, "");
+          output4 = output4.replace(/\\/g, "");
         } else {
-          output = output.replace(/\\+/g, (m) => {
+          output4 = output4.replace(/\\+/g, (m) => {
             return m.length % 2 === 0 ? "\\\\" : m ? "\\" : "";
           });
         }
       }
-      if (output === input && opts.contains === true) {
+      if (output4 === input && opts.contains === true) {
         state.output = input;
         return state;
       }
-      state.output = utils.wrapOutput(output, state, options);
+      state.output = utils.wrapOutput(output4, state, options);
       return state;
     }
     while (!eos()) {
@@ -2159,7 +2159,7 @@ var require_parse2 = __commonJS((exports2, module2) => {
           push({type: "text", value, output: value});
           continue;
         }
-        let output = ")";
+        let output4 = ")";
         if (brace.dots === true) {
           const arr = tokens.slice();
           const range = [];
@@ -2172,20 +2172,20 @@ var require_parse2 = __commonJS((exports2, module2) => {
               range.unshift(arr[i].value);
             }
           }
-          output = expandRange(range, opts);
+          output4 = expandRange(range, opts);
           state.backtrack = true;
         }
         if (brace.comma !== true && brace.dots !== true) {
           const out = state.output.slice(0, brace.outputIndex);
           const toks = state.tokens.slice(brace.tokensIndex);
           brace.value = brace.output = "\\{";
-          value = output = "\\}";
+          value = output4 = "\\}";
           state.output = out;
           for (const t of toks) {
             state.output += t.output || t.value;
           }
         }
-        push({type: "brace", value, output});
+        push({type: "brace", value, output: output4});
         decrement("braces");
         braces.pop();
         continue;
@@ -2198,13 +2198,13 @@ var require_parse2 = __commonJS((exports2, module2) => {
         continue;
       }
       if (value === ",") {
-        let output = value;
+        let output4 = value;
         const brace = braces[braces.length - 1];
         if (brace && stack[stack.length - 1] === "braces") {
           brace.comma = true;
-          output = "|";
+          output4 = "|";
         }
-        push({type: "comma", value, output});
+        push({type: "comma", value, output: output4});
         continue;
       }
       if (value === "/") {
@@ -2245,14 +2245,14 @@ var require_parse2 = __commonJS((exports2, module2) => {
         }
         if (prev && prev.type === "paren") {
           const next = peek();
-          let output = value;
+          let output4 = value;
           if (next === "<" && !utils.supportsLookbehinds()) {
             throw new Error("Node.js v10 or higher is required for regex lookbehinds");
           }
           if (prev.value === "(" && !/[!=<:]/.test(next) || next === "<" && !/<([!=]|\w+>)/.test(remaining())) {
-            output = `\\${value}`;
+            output4 = `\\${value}`;
           }
-          push({type: "text", value, output});
+          push({type: "text", value, output: output4});
           continue;
         }
         if (opts.dot !== true && (prev.type === "slash" || prev.type === "bos")) {
@@ -2530,8 +2530,8 @@ var require_parse2 = __commonJS((exports2, module2) => {
         }
       }
     };
-    const output = utils.removePrefix(input, state);
-    let source = create(output);
+    const output4 = utils.removePrefix(input, state);
+    let source = create(output4);
     if (source && opts.strictSlashes !== true) {
       source += `${SLASH_LITERAL}?`;
     }
@@ -2577,8 +2577,8 @@ var require_picomatch = __commonJS((exports2, module2) => {
       isIgnored = picomatch(opts.ignore, ignoreOpts, returnState);
     }
     const matcher = (input, returnObject = false) => {
-      const {isMatch, match, output} = picomatch.test(input, regex, options, {glob: glob2, posix});
-      const result = {glob: glob2, state, regex, posix, input, output, match, isMatch};
+      const {isMatch, match, output: output4} = picomatch.test(input, regex, options, {glob: glob2, posix});
+      const result = {glob: glob2, state, regex, posix, input, output: output4, match, isMatch};
       if (typeof opts.onResult === "function") {
         opts.onResult(result);
       }
@@ -2613,19 +2613,19 @@ var require_picomatch = __commonJS((exports2, module2) => {
     const opts = options || {};
     const format = opts.format || (posix ? utils.toPosixSlashes : null);
     let match = input === glob2;
-    let output = match && format ? format(input) : input;
+    let output4 = match && format ? format(input) : input;
     if (match === false) {
-      output = format ? format(input) : input;
-      match = output === glob2;
+      output4 = format ? format(input) : input;
+      match = output4 === glob2;
     }
     if (match === false || opts.capture === true) {
       if (opts.matchBase === true || opts.basename === true) {
         match = picomatch.matchBase(input, regex, options, posix);
       } else {
-        match = regex.exec(output);
+        match = regex.exec(output4);
       }
     }
-    return {isMatch: Boolean(match), match, output};
+    return {isMatch: Boolean(match), match, output: output4};
   };
   picomatch.matchBase = (input, glob2, options, posix = utils.isWindows(options)) => {
     const regex = glob2 instanceof RegExp ? glob2 : picomatch.makeRe(glob2, options);
@@ -2662,19 +2662,19 @@ var require_picomatch = __commonJS((exports2, module2) => {
     const opts = options || {};
     let parsed = {negated: false, fastpaths: true};
     let prefix = "";
-    let output;
+    let output4;
     if (input.startsWith("./")) {
       input = input.slice(2);
       prefix = parsed.prefix = "./";
     }
     if (opts.fastpaths !== false && (input[0] === "." || input[0] === "*")) {
-      output = parse3.fastpaths(input, options);
+      output4 = parse3.fastpaths(input, options);
     }
-    if (output === void 0) {
+    if (output4 === void 0) {
       parsed = parse3(input, options);
       parsed.prefix = prefix + (parsed.prefix || "");
     } else {
-      parsed.output = output;
+      parsed.output = output4;
     }
     return picomatch.compileRe(parsed, options, returnOutput, returnState);
   };
@@ -4982,7 +4982,7 @@ var require_generated = __commonJS((exports2) => {
   exports2.isSuper = isSuper;
   exports2.isTaggedTemplateExpression = isTaggedTemplateExpression;
   exports2.isTemplateElement = isTemplateElement;
-  exports2.isTemplateLiteral = isTemplateLiteral;
+  exports2.isTemplateLiteral = isTemplateLiteral2;
   exports2.isYieldExpression = isYieldExpression;
   exports2.isAwaitExpression = isAwaitExpression;
   exports2.isImport = isImport;
@@ -6153,7 +6153,7 @@ var require_generated = __commonJS((exports2) => {
     }
     return false;
   }
-  function isTemplateLiteral(node, opts) {
+  function isTemplateLiteral2(node, opts) {
     if (!node)
       return false;
     const nodeType = node.type;
@@ -30966,7 +30966,7 @@ var require_templates = __commonJS((exports2, module2) => {
     ["e", ""],
     ["a", "\x07"]
   ]);
-  function unescape(c) {
+  function unescape2(c) {
     if (c[0] === "u" && c.length === 5 || c[0] === "x" && c.length === 3) {
       return String.fromCharCode(parseInt(c.slice(1), 16));
     }
@@ -30980,7 +30980,7 @@ var require_templates = __commonJS((exports2, module2) => {
       if (!isNaN(chunk)) {
         results.push(Number(chunk));
       } else if (matches = chunk.match(STRING_REGEX)) {
-        results.push(matches[2].replace(ESCAPE_REGEX, (m, escape, chr) => escape ? unescape(escape) : chr));
+        results.push(matches[2].replace(ESCAPE_REGEX, (m, escape, chr) => escape ? unescape2(escape) : chr));
       } else {
         throw new Error(`Invalid Chalk template style argument: ${chunk} (in style '${name}')`);
       }
@@ -31030,7 +31030,7 @@ var require_templates = __commonJS((exports2, module2) => {
     let chunk = [];
     tmp.replace(TEMPLATE_REGEX, (m, escapeChar, inverse, style, close, chr) => {
       if (escapeChar) {
-        chunk.push(unescape(escapeChar));
+        chunk.push(unescape2(escapeChar));
       } else if (style) {
         const str = chunk.join("");
         chunk = [];
@@ -51705,7 +51705,7 @@ var require_lodash = __commonJS((exports2, module2) => {
         }
         return result2 + omission;
       }
-      function unescape(string) {
+      function unescape2(string) {
         string = toString(string);
         return string && reHasEscapedHtml.test(string) ? string.replace(reEscapedHtml, unescapeHtmlChar) : string;
       }
@@ -52219,7 +52219,7 @@ var require_lodash = __commonJS((exports2, module2) => {
       lodash3.trimEnd = trimEnd;
       lodash3.trimStart = trimStart;
       lodash3.truncate = truncate;
-      lodash3.unescape = unescape;
+      lodash3.unescape = unescape2;
       lodash3.uniqueId = uniqueId;
       lodash3.upperCase = upperCase;
       lodash3.upperFirst = upperFirst;
@@ -52410,13 +52410,1250 @@ var require_lodash = __commonJS((exports2, module2) => {
   }).call(exports2);
 });
 
+// node_modules/sourcemap-codec/dist/sourcemap-codec.umd.js
+var require_sourcemap_codec_umd = __commonJS((exports2, module2) => {
+  (function(global2, factory) {
+    typeof exports2 === "object" && typeof module2 !== "undefined" ? factory(exports2) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = global2 || self, factory(global2.sourcemapCodec = {}));
+  })(exports2, function(exports3) {
+    "use strict";
+    var charToInteger = {};
+    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    for (var i = 0; i < chars.length; i++) {
+      charToInteger[chars.charCodeAt(i)] = i;
+    }
+    function decode(mappings) {
+      var decoded = [];
+      var line = [];
+      var segment = [
+        0,
+        0,
+        0,
+        0,
+        0
+      ];
+      var j = 0;
+      for (var i2 = 0, shift = 0, value = 0; i2 < mappings.length; i2++) {
+        var c = mappings.charCodeAt(i2);
+        if (c === 44) {
+          segmentify(line, segment, j);
+          j = 0;
+        } else if (c === 59) {
+          segmentify(line, segment, j);
+          j = 0;
+          decoded.push(line);
+          line = [];
+          segment[0] = 0;
+        } else {
+          var integer = charToInteger[c];
+          if (integer === void 0) {
+            throw new Error("Invalid character (" + String.fromCharCode(c) + ")");
+          }
+          var hasContinuationBit = integer & 32;
+          integer &= 31;
+          value += integer << shift;
+          if (hasContinuationBit) {
+            shift += 5;
+          } else {
+            var shouldNegate = value & 1;
+            value >>>= 1;
+            if (shouldNegate) {
+              value = value === 0 ? -2147483648 : -value;
+            }
+            segment[j] += value;
+            j++;
+            value = shift = 0;
+          }
+        }
+      }
+      segmentify(line, segment, j);
+      decoded.push(line);
+      return decoded;
+    }
+    function segmentify(line, segment, j) {
+      if (j === 4)
+        line.push([segment[0], segment[1], segment[2], segment[3]]);
+      else if (j === 5)
+        line.push([segment[0], segment[1], segment[2], segment[3], segment[4]]);
+      else if (j === 1)
+        line.push([segment[0]]);
+    }
+    function encode(decoded) {
+      var sourceFileIndex = 0;
+      var sourceCodeLine = 0;
+      var sourceCodeColumn = 0;
+      var nameIndex = 0;
+      var mappings = "";
+      for (var i2 = 0; i2 < decoded.length; i2++) {
+        var line = decoded[i2];
+        if (i2 > 0)
+          mappings += ";";
+        if (line.length === 0)
+          continue;
+        var generatedCodeColumn = 0;
+        var lineMappings = [];
+        for (var _i = 0, line_1 = line; _i < line_1.length; _i++) {
+          var segment = line_1[_i];
+          var segmentMappings = encodeInteger(segment[0] - generatedCodeColumn);
+          generatedCodeColumn = segment[0];
+          if (segment.length > 1) {
+            segmentMappings += encodeInteger(segment[1] - sourceFileIndex) + encodeInteger(segment[2] - sourceCodeLine) + encodeInteger(segment[3] - sourceCodeColumn);
+            sourceFileIndex = segment[1];
+            sourceCodeLine = segment[2];
+            sourceCodeColumn = segment[3];
+          }
+          if (segment.length === 5) {
+            segmentMappings += encodeInteger(segment[4] - nameIndex);
+            nameIndex = segment[4];
+          }
+          lineMappings.push(segmentMappings);
+        }
+        mappings += lineMappings.join(",");
+      }
+      return mappings;
+    }
+    function encodeInteger(num) {
+      var result = "";
+      num = num < 0 ? -num << 1 | 1 : num << 1;
+      do {
+        var clamped = num & 31;
+        num >>>= 5;
+        if (num > 0) {
+          clamped |= 32;
+        }
+        result += chars[clamped];
+      } while (num > 0);
+      return result;
+    }
+    exports3.decode = decode;
+    exports3.encode = encode;
+    Object.defineProperty(exports3, "__esModule", {value: true});
+  });
+});
+
+// node_modules/magic-string/dist/magic-string.cjs.js
+var require_magic_string_cjs = __commonJS((exports2, module2) => {
+  "use strict";
+  var sourcemapCodec = require_sourcemap_codec_umd();
+  var BitSet = function BitSet2(arg) {
+    this.bits = arg instanceof BitSet2 ? arg.bits.slice() : [];
+  };
+  BitSet.prototype.add = function add(n2) {
+    this.bits[n2 >> 5] |= 1 << (n2 & 31);
+  };
+  BitSet.prototype.has = function has(n2) {
+    return !!(this.bits[n2 >> 5] & 1 << (n2 & 31));
+  };
+  var Chunk = function Chunk2(start, end, content) {
+    this.start = start;
+    this.end = end;
+    this.original = content;
+    this.intro = "";
+    this.outro = "";
+    this.content = content;
+    this.storeName = false;
+    this.edited = false;
+    Object.defineProperties(this, {
+      previous: {writable: true, value: null},
+      next: {writable: true, value: null}
+    });
+  };
+  Chunk.prototype.appendLeft = function appendLeft(content) {
+    this.outro += content;
+  };
+  Chunk.prototype.appendRight = function appendRight(content) {
+    this.intro = this.intro + content;
+  };
+  Chunk.prototype.clone = function clone() {
+    var chunk = new Chunk(this.start, this.end, this.original);
+    chunk.intro = this.intro;
+    chunk.outro = this.outro;
+    chunk.content = this.content;
+    chunk.storeName = this.storeName;
+    chunk.edited = this.edited;
+    return chunk;
+  };
+  Chunk.prototype.contains = function contains(index) {
+    return this.start < index && index < this.end;
+  };
+  Chunk.prototype.eachNext = function eachNext(fn) {
+    var chunk = this;
+    while (chunk) {
+      fn(chunk);
+      chunk = chunk.next;
+    }
+  };
+  Chunk.prototype.eachPrevious = function eachPrevious(fn) {
+    var chunk = this;
+    while (chunk) {
+      fn(chunk);
+      chunk = chunk.previous;
+    }
+  };
+  Chunk.prototype.edit = function edit(content, storeName, contentOnly) {
+    this.content = content;
+    if (!contentOnly) {
+      this.intro = "";
+      this.outro = "";
+    }
+    this.storeName = storeName;
+    this.edited = true;
+    return this;
+  };
+  Chunk.prototype.prependLeft = function prependLeft(content) {
+    this.outro = content + this.outro;
+  };
+  Chunk.prototype.prependRight = function prependRight(content) {
+    this.intro = content + this.intro;
+  };
+  Chunk.prototype.split = function split(index) {
+    var sliceIndex = index - this.start;
+    var originalBefore = this.original.slice(0, sliceIndex);
+    var originalAfter = this.original.slice(sliceIndex);
+    this.original = originalBefore;
+    var newChunk = new Chunk(index, this.end, originalAfter);
+    newChunk.outro = this.outro;
+    this.outro = "";
+    this.end = index;
+    if (this.edited) {
+      newChunk.edit("", false);
+      this.content = "";
+    } else {
+      this.content = originalBefore;
+    }
+    newChunk.next = this.next;
+    if (newChunk.next) {
+      newChunk.next.previous = newChunk;
+    }
+    newChunk.previous = this;
+    this.next = newChunk;
+    return newChunk;
+  };
+  Chunk.prototype.toString = function toString2() {
+    return this.intro + this.content + this.outro;
+  };
+  Chunk.prototype.trimEnd = function trimEnd(rx) {
+    this.outro = this.outro.replace(rx, "");
+    if (this.outro.length) {
+      return true;
+    }
+    var trimmed = this.content.replace(rx, "");
+    if (trimmed.length) {
+      if (trimmed !== this.content) {
+        this.split(this.start + trimmed.length).edit("", void 0, true);
+      }
+      return true;
+    } else {
+      this.edit("", void 0, true);
+      this.intro = this.intro.replace(rx, "");
+      if (this.intro.length) {
+        return true;
+      }
+    }
+  };
+  Chunk.prototype.trimStart = function trimStart(rx) {
+    this.intro = this.intro.replace(rx, "");
+    if (this.intro.length) {
+      return true;
+    }
+    var trimmed = this.content.replace(rx, "");
+    if (trimmed.length) {
+      if (trimmed !== this.content) {
+        this.split(this.end - trimmed.length);
+        this.edit("", void 0, true);
+      }
+      return true;
+    } else {
+      this.edit("", void 0, true);
+      this.outro = this.outro.replace(rx, "");
+      if (this.outro.length) {
+        return true;
+      }
+    }
+  };
+  var btoa = function() {
+    throw new Error("Unsupported environment: `window.btoa` or `Buffer` should be supported.");
+  };
+  if (typeof window !== "undefined" && typeof window.btoa === "function") {
+    btoa = function(str) {
+      return window.btoa(unescape(encodeURIComponent(str)));
+    };
+  } else if (typeof Buffer === "function") {
+    btoa = function(str) {
+      return Buffer.from(str, "utf-8").toString("base64");
+    };
+  }
+  var SourceMap = function SourceMap2(properties) {
+    this.version = 3;
+    this.file = properties.file;
+    this.sources = properties.sources;
+    this.sourcesContent = properties.sourcesContent;
+    this.names = properties.names;
+    this.mappings = sourcemapCodec.encode(properties.mappings);
+  };
+  SourceMap.prototype.toString = function toString2() {
+    return JSON.stringify(this);
+  };
+  SourceMap.prototype.toUrl = function toUrl() {
+    return "data:application/json;charset=utf-8;base64," + btoa(this.toString());
+  };
+  function guessIndent(code) {
+    var lines = code.split("\n");
+    var tabbed = lines.filter(function(line) {
+      return /^\t+/.test(line);
+    });
+    var spaced = lines.filter(function(line) {
+      return /^ {2,}/.test(line);
+    });
+    if (tabbed.length === 0 && spaced.length === 0) {
+      return null;
+    }
+    if (tabbed.length >= spaced.length) {
+      return "	";
+    }
+    var min = spaced.reduce(function(previous, current) {
+      var numSpaces = /^ +/.exec(current)[0].length;
+      return Math.min(numSpaces, previous);
+    }, Infinity);
+    return new Array(min + 1).join(" ");
+  }
+  function getRelativePath(from, to) {
+    var fromParts = from.split(/[/\\]/);
+    var toParts = to.split(/[/\\]/);
+    fromParts.pop();
+    while (fromParts[0] === toParts[0]) {
+      fromParts.shift();
+      toParts.shift();
+    }
+    if (fromParts.length) {
+      var i = fromParts.length;
+      while (i--) {
+        fromParts[i] = "..";
+      }
+    }
+    return fromParts.concat(toParts).join("/");
+  }
+  var toString = Object.prototype.toString;
+  function isObject(thing) {
+    return toString.call(thing) === "[object Object]";
+  }
+  function getLocator(source) {
+    var originalLines = source.split("\n");
+    var lineOffsets = [];
+    for (var i = 0, pos = 0; i < originalLines.length; i++) {
+      lineOffsets.push(pos);
+      pos += originalLines[i].length + 1;
+    }
+    return function locate(index) {
+      var i2 = 0;
+      var j = lineOffsets.length;
+      while (i2 < j) {
+        var m = i2 + j >> 1;
+        if (index < lineOffsets[m]) {
+          j = m;
+        } else {
+          i2 = m + 1;
+        }
+      }
+      var line = i2 - 1;
+      var column = index - lineOffsets[line];
+      return {line, column};
+    };
+  }
+  var Mappings = function Mappings2(hires) {
+    this.hires = hires;
+    this.generatedCodeLine = 0;
+    this.generatedCodeColumn = 0;
+    this.raw = [];
+    this.rawSegments = this.raw[this.generatedCodeLine] = [];
+    this.pending = null;
+  };
+  Mappings.prototype.addEdit = function addEdit(sourceIndex, content, loc, nameIndex) {
+    if (content.length) {
+      var segment = [this.generatedCodeColumn, sourceIndex, loc.line, loc.column];
+      if (nameIndex >= 0) {
+        segment.push(nameIndex);
+      }
+      this.rawSegments.push(segment);
+    } else if (this.pending) {
+      this.rawSegments.push(this.pending);
+    }
+    this.advance(content);
+    this.pending = null;
+  };
+  Mappings.prototype.addUneditedChunk = function addUneditedChunk(sourceIndex, chunk, original, loc, sourcemapLocations) {
+    var originalCharIndex = chunk.start;
+    var first = true;
+    while (originalCharIndex < chunk.end) {
+      if (this.hires || first || sourcemapLocations.has(originalCharIndex)) {
+        this.rawSegments.push([this.generatedCodeColumn, sourceIndex, loc.line, loc.column]);
+      }
+      if (original[originalCharIndex] === "\n") {
+        loc.line += 1;
+        loc.column = 0;
+        this.generatedCodeLine += 1;
+        this.raw[this.generatedCodeLine] = this.rawSegments = [];
+        this.generatedCodeColumn = 0;
+        first = true;
+      } else {
+        loc.column += 1;
+        this.generatedCodeColumn += 1;
+        first = false;
+      }
+      originalCharIndex += 1;
+    }
+    this.pending = null;
+  };
+  Mappings.prototype.advance = function advance(str) {
+    if (!str) {
+      return;
+    }
+    var lines = str.split("\n");
+    if (lines.length > 1) {
+      for (var i = 0; i < lines.length - 1; i++) {
+        this.generatedCodeLine++;
+        this.raw[this.generatedCodeLine] = this.rawSegments = [];
+      }
+      this.generatedCodeColumn = 0;
+    }
+    this.generatedCodeColumn += lines[lines.length - 1].length;
+  };
+  var n = "\n";
+  var warned = {
+    insertLeft: false,
+    insertRight: false,
+    storeName: false
+  };
+  var MagicString2 = function MagicString3(string, options) {
+    if (options === void 0)
+      options = {};
+    var chunk = new Chunk(0, string.length, string);
+    Object.defineProperties(this, {
+      original: {writable: true, value: string},
+      outro: {writable: true, value: ""},
+      intro: {writable: true, value: ""},
+      firstChunk: {writable: true, value: chunk},
+      lastChunk: {writable: true, value: chunk},
+      lastSearchedChunk: {writable: true, value: chunk},
+      byStart: {writable: true, value: {}},
+      byEnd: {writable: true, value: {}},
+      filename: {writable: true, value: options.filename},
+      indentExclusionRanges: {writable: true, value: options.indentExclusionRanges},
+      sourcemapLocations: {writable: true, value: new BitSet()},
+      storedNames: {writable: true, value: {}},
+      indentStr: {writable: true, value: guessIndent(string)}
+    });
+    this.byStart[0] = chunk;
+    this.byEnd[string.length] = chunk;
+  };
+  MagicString2.prototype.addSourcemapLocation = function addSourcemapLocation(char) {
+    this.sourcemapLocations.add(char);
+  };
+  MagicString2.prototype.append = function append(content) {
+    if (typeof content !== "string") {
+      throw new TypeError("outro content must be a string");
+    }
+    this.outro += content;
+    return this;
+  };
+  MagicString2.prototype.appendLeft = function appendLeft(index, content) {
+    if (typeof content !== "string") {
+      throw new TypeError("inserted content must be a string");
+    }
+    this._split(index);
+    var chunk = this.byEnd[index];
+    if (chunk) {
+      chunk.appendLeft(content);
+    } else {
+      this.intro += content;
+    }
+    return this;
+  };
+  MagicString2.prototype.appendRight = function appendRight(index, content) {
+    if (typeof content !== "string") {
+      throw new TypeError("inserted content must be a string");
+    }
+    this._split(index);
+    var chunk = this.byStart[index];
+    if (chunk) {
+      chunk.appendRight(content);
+    } else {
+      this.outro += content;
+    }
+    return this;
+  };
+  MagicString2.prototype.clone = function clone() {
+    var cloned = new MagicString2(this.original, {filename: this.filename});
+    var originalChunk = this.firstChunk;
+    var clonedChunk = cloned.firstChunk = cloned.lastSearchedChunk = originalChunk.clone();
+    while (originalChunk) {
+      cloned.byStart[clonedChunk.start] = clonedChunk;
+      cloned.byEnd[clonedChunk.end] = clonedChunk;
+      var nextOriginalChunk = originalChunk.next;
+      var nextClonedChunk = nextOriginalChunk && nextOriginalChunk.clone();
+      if (nextClonedChunk) {
+        clonedChunk.next = nextClonedChunk;
+        nextClonedChunk.previous = clonedChunk;
+        clonedChunk = nextClonedChunk;
+      }
+      originalChunk = nextOriginalChunk;
+    }
+    cloned.lastChunk = clonedChunk;
+    if (this.indentExclusionRanges) {
+      cloned.indentExclusionRanges = this.indentExclusionRanges.slice();
+    }
+    cloned.sourcemapLocations = new BitSet(this.sourcemapLocations);
+    cloned.intro = this.intro;
+    cloned.outro = this.outro;
+    return cloned;
+  };
+  MagicString2.prototype.generateDecodedMap = function generateDecodedMap(options) {
+    var this$1 = this;
+    options = options || {};
+    var sourceIndex = 0;
+    var names = Object.keys(this.storedNames);
+    var mappings = new Mappings(options.hires);
+    var locate = getLocator(this.original);
+    if (this.intro) {
+      mappings.advance(this.intro);
+    }
+    this.firstChunk.eachNext(function(chunk) {
+      var loc = locate(chunk.start);
+      if (chunk.intro.length) {
+        mappings.advance(chunk.intro);
+      }
+      if (chunk.edited) {
+        mappings.addEdit(sourceIndex, chunk.content, loc, chunk.storeName ? names.indexOf(chunk.original) : -1);
+      } else {
+        mappings.addUneditedChunk(sourceIndex, chunk, this$1.original, loc, this$1.sourcemapLocations);
+      }
+      if (chunk.outro.length) {
+        mappings.advance(chunk.outro);
+      }
+    });
+    return {
+      file: options.file ? options.file.split(/[/\\]/).pop() : null,
+      sources: [options.source ? getRelativePath(options.file || "", options.source) : null],
+      sourcesContent: options.includeContent ? [this.original] : [null],
+      names,
+      mappings: mappings.raw
+    };
+  };
+  MagicString2.prototype.generateMap = function generateMap(options) {
+    return new SourceMap(this.generateDecodedMap(options));
+  };
+  MagicString2.prototype.getIndentString = function getIndentString() {
+    return this.indentStr === null ? "	" : this.indentStr;
+  };
+  MagicString2.prototype.indent = function indent(indentStr, options) {
+    var pattern = /^[^\r\n]/gm;
+    if (isObject(indentStr)) {
+      options = indentStr;
+      indentStr = void 0;
+    }
+    indentStr = indentStr !== void 0 ? indentStr : this.indentStr || "	";
+    if (indentStr === "") {
+      return this;
+    }
+    options = options || {};
+    var isExcluded = {};
+    if (options.exclude) {
+      var exclusions = typeof options.exclude[0] === "number" ? [options.exclude] : options.exclude;
+      exclusions.forEach(function(exclusion) {
+        for (var i = exclusion[0]; i < exclusion[1]; i += 1) {
+          isExcluded[i] = true;
+        }
+      });
+    }
+    var shouldIndentNextCharacter = options.indentStart !== false;
+    var replacer = function(match) {
+      if (shouldIndentNextCharacter) {
+        return "" + indentStr + match;
+      }
+      shouldIndentNextCharacter = true;
+      return match;
+    };
+    this.intro = this.intro.replace(pattern, replacer);
+    var charIndex = 0;
+    var chunk = this.firstChunk;
+    while (chunk) {
+      var end = chunk.end;
+      if (chunk.edited) {
+        if (!isExcluded[charIndex]) {
+          chunk.content = chunk.content.replace(pattern, replacer);
+          if (chunk.content.length) {
+            shouldIndentNextCharacter = chunk.content[chunk.content.length - 1] === "\n";
+          }
+        }
+      } else {
+        charIndex = chunk.start;
+        while (charIndex < end) {
+          if (!isExcluded[charIndex]) {
+            var char = this.original[charIndex];
+            if (char === "\n") {
+              shouldIndentNextCharacter = true;
+            } else if (char !== "\r" && shouldIndentNextCharacter) {
+              shouldIndentNextCharacter = false;
+              if (charIndex === chunk.start) {
+                chunk.prependRight(indentStr);
+              } else {
+                this._splitChunk(chunk, charIndex);
+                chunk = chunk.next;
+                chunk.prependRight(indentStr);
+              }
+            }
+          }
+          charIndex += 1;
+        }
+      }
+      charIndex = chunk.end;
+      chunk = chunk.next;
+    }
+    this.outro = this.outro.replace(pattern, replacer);
+    return this;
+  };
+  MagicString2.prototype.insert = function insert() {
+    throw new Error("magicString.insert(...) is deprecated. Use prependRight(...) or appendLeft(...)");
+  };
+  MagicString2.prototype.insertLeft = function insertLeft(index, content) {
+    if (!warned.insertLeft) {
+      console.warn("magicString.insertLeft(...) is deprecated. Use magicString.appendLeft(...) instead");
+      warned.insertLeft = true;
+    }
+    return this.appendLeft(index, content);
+  };
+  MagicString2.prototype.insertRight = function insertRight(index, content) {
+    if (!warned.insertRight) {
+      console.warn("magicString.insertRight(...) is deprecated. Use magicString.prependRight(...) instead");
+      warned.insertRight = true;
+    }
+    return this.prependRight(index, content);
+  };
+  MagicString2.prototype.move = function move(start, end, index) {
+    if (index >= start && index <= end) {
+      throw new Error("Cannot move a selection inside itself");
+    }
+    this._split(start);
+    this._split(end);
+    this._split(index);
+    var first = this.byStart[start];
+    var last = this.byEnd[end];
+    var oldLeft = first.previous;
+    var oldRight = last.next;
+    var newRight = this.byStart[index];
+    if (!newRight && last === this.lastChunk) {
+      return this;
+    }
+    var newLeft = newRight ? newRight.previous : this.lastChunk;
+    if (oldLeft) {
+      oldLeft.next = oldRight;
+    }
+    if (oldRight) {
+      oldRight.previous = oldLeft;
+    }
+    if (newLeft) {
+      newLeft.next = first;
+    }
+    if (newRight) {
+      newRight.previous = last;
+    }
+    if (!first.previous) {
+      this.firstChunk = last.next;
+    }
+    if (!last.next) {
+      this.lastChunk = first.previous;
+      this.lastChunk.next = null;
+    }
+    first.previous = newLeft;
+    last.next = newRight || null;
+    if (!newLeft) {
+      this.firstChunk = first;
+    }
+    if (!newRight) {
+      this.lastChunk = last;
+    }
+    return this;
+  };
+  MagicString2.prototype.overwrite = function overwrite(start, end, content, options) {
+    if (typeof content !== "string") {
+      throw new TypeError("replacement content must be a string");
+    }
+    while (start < 0) {
+      start += this.original.length;
+    }
+    while (end < 0) {
+      end += this.original.length;
+    }
+    if (end > this.original.length) {
+      throw new Error("end is out of bounds");
+    }
+    if (start === end) {
+      throw new Error("Cannot overwrite a zero-length range \u2013 use appendLeft or prependRight instead");
+    }
+    this._split(start);
+    this._split(end);
+    if (options === true) {
+      if (!warned.storeName) {
+        console.warn("The final argument to magicString.overwrite(...) should be an options object. See https://github.com/rich-harris/magic-string");
+        warned.storeName = true;
+      }
+      options = {storeName: true};
+    }
+    var storeName = options !== void 0 ? options.storeName : false;
+    var contentOnly = options !== void 0 ? options.contentOnly : false;
+    if (storeName) {
+      var original = this.original.slice(start, end);
+      this.storedNames[original] = true;
+    }
+    var first = this.byStart[start];
+    var last = this.byEnd[end];
+    if (first) {
+      if (end > first.end && first.next !== this.byStart[first.end]) {
+        throw new Error("Cannot overwrite across a split point");
+      }
+      first.edit(content, storeName, contentOnly);
+      if (first !== last) {
+        var chunk = first.next;
+        while (chunk !== last) {
+          chunk.edit("", false);
+          chunk = chunk.next;
+        }
+        chunk.edit("", false);
+      }
+    } else {
+      var newChunk = new Chunk(start, end, "").edit(content, storeName);
+      last.next = newChunk;
+      newChunk.previous = last;
+    }
+    return this;
+  };
+  MagicString2.prototype.prepend = function prepend(content) {
+    if (typeof content !== "string") {
+      throw new TypeError("outro content must be a string");
+    }
+    this.intro = content + this.intro;
+    return this;
+  };
+  MagicString2.prototype.prependLeft = function prependLeft(index, content) {
+    if (typeof content !== "string") {
+      throw new TypeError("inserted content must be a string");
+    }
+    this._split(index);
+    var chunk = this.byEnd[index];
+    if (chunk) {
+      chunk.prependLeft(content);
+    } else {
+      this.intro = content + this.intro;
+    }
+    return this;
+  };
+  MagicString2.prototype.prependRight = function prependRight(index, content) {
+    if (typeof content !== "string") {
+      throw new TypeError("inserted content must be a string");
+    }
+    this._split(index);
+    var chunk = this.byStart[index];
+    if (chunk) {
+      chunk.prependRight(content);
+    } else {
+      this.outro = content + this.outro;
+    }
+    return this;
+  };
+  MagicString2.prototype.remove = function remove(start, end) {
+    while (start < 0) {
+      start += this.original.length;
+    }
+    while (end < 0) {
+      end += this.original.length;
+    }
+    if (start === end) {
+      return this;
+    }
+    if (start < 0 || end > this.original.length) {
+      throw new Error("Character is out of bounds");
+    }
+    if (start > end) {
+      throw new Error("end must be greater than start");
+    }
+    this._split(start);
+    this._split(end);
+    var chunk = this.byStart[start];
+    while (chunk) {
+      chunk.intro = "";
+      chunk.outro = "";
+      chunk.edit("");
+      chunk = end > chunk.end ? this.byStart[chunk.end] : null;
+    }
+    return this;
+  };
+  MagicString2.prototype.lastChar = function lastChar() {
+    if (this.outro.length) {
+      return this.outro[this.outro.length - 1];
+    }
+    var chunk = this.lastChunk;
+    do {
+      if (chunk.outro.length) {
+        return chunk.outro[chunk.outro.length - 1];
+      }
+      if (chunk.content.length) {
+        return chunk.content[chunk.content.length - 1];
+      }
+      if (chunk.intro.length) {
+        return chunk.intro[chunk.intro.length - 1];
+      }
+    } while (chunk = chunk.previous);
+    if (this.intro.length) {
+      return this.intro[this.intro.length - 1];
+    }
+    return "";
+  };
+  MagicString2.prototype.lastLine = function lastLine() {
+    var lineIndex = this.outro.lastIndexOf(n);
+    if (lineIndex !== -1) {
+      return this.outro.substr(lineIndex + 1);
+    }
+    var lineStr = this.outro;
+    var chunk = this.lastChunk;
+    do {
+      if (chunk.outro.length > 0) {
+        lineIndex = chunk.outro.lastIndexOf(n);
+        if (lineIndex !== -1) {
+          return chunk.outro.substr(lineIndex + 1) + lineStr;
+        }
+        lineStr = chunk.outro + lineStr;
+      }
+      if (chunk.content.length > 0) {
+        lineIndex = chunk.content.lastIndexOf(n);
+        if (lineIndex !== -1) {
+          return chunk.content.substr(lineIndex + 1) + lineStr;
+        }
+        lineStr = chunk.content + lineStr;
+      }
+      if (chunk.intro.length > 0) {
+        lineIndex = chunk.intro.lastIndexOf(n);
+        if (lineIndex !== -1) {
+          return chunk.intro.substr(lineIndex + 1) + lineStr;
+        }
+        lineStr = chunk.intro + lineStr;
+      }
+    } while (chunk = chunk.previous);
+    lineIndex = this.intro.lastIndexOf(n);
+    if (lineIndex !== -1) {
+      return this.intro.substr(lineIndex + 1) + lineStr;
+    }
+    return this.intro + lineStr;
+  };
+  MagicString2.prototype.slice = function slice(start, end) {
+    if (start === void 0)
+      start = 0;
+    if (end === void 0)
+      end = this.original.length;
+    while (start < 0) {
+      start += this.original.length;
+    }
+    while (end < 0) {
+      end += this.original.length;
+    }
+    var result = "";
+    var chunk = this.firstChunk;
+    while (chunk && (chunk.start > start || chunk.end <= start)) {
+      if (chunk.start < end && chunk.end >= end) {
+        return result;
+      }
+      chunk = chunk.next;
+    }
+    if (chunk && chunk.edited && chunk.start !== start) {
+      throw new Error("Cannot use replaced character " + start + " as slice start anchor.");
+    }
+    var startChunk = chunk;
+    while (chunk) {
+      if (chunk.intro && (startChunk !== chunk || chunk.start === start)) {
+        result += chunk.intro;
+      }
+      var containsEnd = chunk.start < end && chunk.end >= end;
+      if (containsEnd && chunk.edited && chunk.end !== end) {
+        throw new Error("Cannot use replaced character " + end + " as slice end anchor.");
+      }
+      var sliceStart = startChunk === chunk ? start - chunk.start : 0;
+      var sliceEnd = containsEnd ? chunk.content.length + end - chunk.end : chunk.content.length;
+      result += chunk.content.slice(sliceStart, sliceEnd);
+      if (chunk.outro && (!containsEnd || chunk.end === end)) {
+        result += chunk.outro;
+      }
+      if (containsEnd) {
+        break;
+      }
+      chunk = chunk.next;
+    }
+    return result;
+  };
+  MagicString2.prototype.snip = function snip(start, end) {
+    var clone = this.clone();
+    clone.remove(0, start);
+    clone.remove(end, clone.original.length);
+    return clone;
+  };
+  MagicString2.prototype._split = function _split(index) {
+    if (this.byStart[index] || this.byEnd[index]) {
+      return;
+    }
+    var chunk = this.lastSearchedChunk;
+    var searchForward = index > chunk.end;
+    while (chunk) {
+      if (chunk.contains(index)) {
+        return this._splitChunk(chunk, index);
+      }
+      chunk = searchForward ? this.byStart[chunk.end] : this.byEnd[chunk.start];
+    }
+  };
+  MagicString2.prototype._splitChunk = function _splitChunk(chunk, index) {
+    if (chunk.edited && chunk.content.length) {
+      var loc = getLocator(this.original)(index);
+      throw new Error("Cannot split a chunk that has already been edited (" + loc.line + ":" + loc.column + ' \u2013 "' + chunk.original + '")');
+    }
+    var newChunk = chunk.split(index);
+    this.byEnd[index] = chunk;
+    this.byStart[index] = newChunk;
+    this.byEnd[newChunk.end] = newChunk;
+    if (chunk === this.lastChunk) {
+      this.lastChunk = newChunk;
+    }
+    this.lastSearchedChunk = chunk;
+    return true;
+  };
+  MagicString2.prototype.toString = function toString2() {
+    var str = this.intro;
+    var chunk = this.firstChunk;
+    while (chunk) {
+      str += chunk.toString();
+      chunk = chunk.next;
+    }
+    return str + this.outro;
+  };
+  MagicString2.prototype.isEmpty = function isEmpty() {
+    var chunk = this.firstChunk;
+    do {
+      if (chunk.intro.length && chunk.intro.trim() || chunk.content.length && chunk.content.trim() || chunk.outro.length && chunk.outro.trim()) {
+        return false;
+      }
+    } while (chunk = chunk.next);
+    return true;
+  };
+  MagicString2.prototype.length = function length() {
+    var chunk = this.firstChunk;
+    var length2 = 0;
+    do {
+      length2 += chunk.intro.length + chunk.content.length + chunk.outro.length;
+    } while (chunk = chunk.next);
+    return length2;
+  };
+  MagicString2.prototype.trimLines = function trimLines() {
+    return this.trim("[\\r\\n]");
+  };
+  MagicString2.prototype.trim = function trim(charType) {
+    return this.trimStart(charType).trimEnd(charType);
+  };
+  MagicString2.prototype.trimEndAborted = function trimEndAborted(charType) {
+    var rx = new RegExp((charType || "\\s") + "+$");
+    this.outro = this.outro.replace(rx, "");
+    if (this.outro.length) {
+      return true;
+    }
+    var chunk = this.lastChunk;
+    do {
+      var end = chunk.end;
+      var aborted = chunk.trimEnd(rx);
+      if (chunk.end !== end) {
+        if (this.lastChunk === chunk) {
+          this.lastChunk = chunk.next;
+        }
+        this.byEnd[chunk.end] = chunk;
+        this.byStart[chunk.next.start] = chunk.next;
+        this.byEnd[chunk.next.end] = chunk.next;
+      }
+      if (aborted) {
+        return true;
+      }
+      chunk = chunk.previous;
+    } while (chunk);
+    return false;
+  };
+  MagicString2.prototype.trimEnd = function trimEnd(charType) {
+    this.trimEndAborted(charType);
+    return this;
+  };
+  MagicString2.prototype.trimStartAborted = function trimStartAborted(charType) {
+    var rx = new RegExp("^" + (charType || "\\s") + "+");
+    this.intro = this.intro.replace(rx, "");
+    if (this.intro.length) {
+      return true;
+    }
+    var chunk = this.firstChunk;
+    do {
+      var end = chunk.end;
+      var aborted = chunk.trimStart(rx);
+      if (chunk.end !== end) {
+        if (chunk === this.lastChunk) {
+          this.lastChunk = chunk.next;
+        }
+        this.byEnd[chunk.end] = chunk;
+        this.byStart[chunk.next.start] = chunk.next;
+        this.byEnd[chunk.next.end] = chunk.next;
+      }
+      if (aborted) {
+        return true;
+      }
+      chunk = chunk.next;
+    } while (chunk);
+    return false;
+  };
+  MagicString2.prototype.trimStart = function trimStart(charType) {
+    this.trimStartAborted(charType);
+    return this;
+  };
+  var hasOwnProp = Object.prototype.hasOwnProperty;
+  var Bundle = function Bundle2(options) {
+    if (options === void 0)
+      options = {};
+    this.intro = options.intro || "";
+    this.separator = options.separator !== void 0 ? options.separator : "\n";
+    this.sources = [];
+    this.uniqueSources = [];
+    this.uniqueSourceIndexByFilename = {};
+  };
+  Bundle.prototype.addSource = function addSource(source) {
+    if (source instanceof MagicString2) {
+      return this.addSource({
+        content: source,
+        filename: source.filename,
+        separator: this.separator
+      });
+    }
+    if (!isObject(source) || !source.content) {
+      throw new Error("bundle.addSource() takes an object with a `content` property, which should be an instance of MagicString, and an optional `filename`");
+    }
+    ["filename", "indentExclusionRanges", "separator"].forEach(function(option) {
+      if (!hasOwnProp.call(source, option)) {
+        source[option] = source.content[option];
+      }
+    });
+    if (source.separator === void 0) {
+      source.separator = this.separator;
+    }
+    if (source.filename) {
+      if (!hasOwnProp.call(this.uniqueSourceIndexByFilename, source.filename)) {
+        this.uniqueSourceIndexByFilename[source.filename] = this.uniqueSources.length;
+        this.uniqueSources.push({filename: source.filename, content: source.content.original});
+      } else {
+        var uniqueSource = this.uniqueSources[this.uniqueSourceIndexByFilename[source.filename]];
+        if (source.content.original !== uniqueSource.content) {
+          throw new Error("Illegal source: same filename (" + source.filename + "), different contents");
+        }
+      }
+    }
+    this.sources.push(source);
+    return this;
+  };
+  Bundle.prototype.append = function append(str, options) {
+    this.addSource({
+      content: new MagicString2(str),
+      separator: options && options.separator || ""
+    });
+    return this;
+  };
+  Bundle.prototype.clone = function clone() {
+    var bundle = new Bundle({
+      intro: this.intro,
+      separator: this.separator
+    });
+    this.sources.forEach(function(source) {
+      bundle.addSource({
+        filename: source.filename,
+        content: source.content.clone(),
+        separator: source.separator
+      });
+    });
+    return bundle;
+  };
+  Bundle.prototype.generateDecodedMap = function generateDecodedMap(options) {
+    var this$1 = this;
+    if (options === void 0)
+      options = {};
+    var names = [];
+    this.sources.forEach(function(source) {
+      Object.keys(source.content.storedNames).forEach(function(name) {
+        if (!~names.indexOf(name)) {
+          names.push(name);
+        }
+      });
+    });
+    var mappings = new Mappings(options.hires);
+    if (this.intro) {
+      mappings.advance(this.intro);
+    }
+    this.sources.forEach(function(source, i) {
+      if (i > 0) {
+        mappings.advance(this$1.separator);
+      }
+      var sourceIndex = source.filename ? this$1.uniqueSourceIndexByFilename[source.filename] : -1;
+      var magicString = source.content;
+      var locate = getLocator(magicString.original);
+      if (magicString.intro) {
+        mappings.advance(magicString.intro);
+      }
+      magicString.firstChunk.eachNext(function(chunk) {
+        var loc = locate(chunk.start);
+        if (chunk.intro.length) {
+          mappings.advance(chunk.intro);
+        }
+        if (source.filename) {
+          if (chunk.edited) {
+            mappings.addEdit(sourceIndex, chunk.content, loc, chunk.storeName ? names.indexOf(chunk.original) : -1);
+          } else {
+            mappings.addUneditedChunk(sourceIndex, chunk, magicString.original, loc, magicString.sourcemapLocations);
+          }
+        } else {
+          mappings.advance(chunk.content);
+        }
+        if (chunk.outro.length) {
+          mappings.advance(chunk.outro);
+        }
+      });
+      if (magicString.outro) {
+        mappings.advance(magicString.outro);
+      }
+    });
+    return {
+      file: options.file ? options.file.split(/[/\\]/).pop() : null,
+      sources: this.uniqueSources.map(function(source) {
+        return options.file ? getRelativePath(options.file, source.filename) : source.filename;
+      }),
+      sourcesContent: this.uniqueSources.map(function(source) {
+        return options.includeContent ? source.content : null;
+      }),
+      names,
+      mappings: mappings.raw
+    };
+  };
+  Bundle.prototype.generateMap = function generateMap(options) {
+    return new SourceMap(this.generateDecodedMap(options));
+  };
+  Bundle.prototype.getIndentString = function getIndentString() {
+    var indentStringCounts = {};
+    this.sources.forEach(function(source) {
+      var indentStr = source.content.indentStr;
+      if (indentStr === null) {
+        return;
+      }
+      if (!indentStringCounts[indentStr]) {
+        indentStringCounts[indentStr] = 0;
+      }
+      indentStringCounts[indentStr] += 1;
+    });
+    return Object.keys(indentStringCounts).sort(function(a, b) {
+      return indentStringCounts[a] - indentStringCounts[b];
+    })[0] || "	";
+  };
+  Bundle.prototype.indent = function indent(indentStr) {
+    var this$1 = this;
+    if (!arguments.length) {
+      indentStr = this.getIndentString();
+    }
+    if (indentStr === "") {
+      return this;
+    }
+    var trailingNewline = !this.intro || this.intro.slice(-1) === "\n";
+    this.sources.forEach(function(source, i) {
+      var separator = source.separator !== void 0 ? source.separator : this$1.separator;
+      var indentStart = trailingNewline || i > 0 && /\r?\n$/.test(separator);
+      source.content.indent(indentStr, {
+        exclude: source.indentExclusionRanges,
+        indentStart
+      });
+      trailingNewline = source.content.lastChar() === "\n";
+    });
+    if (this.intro) {
+      this.intro = indentStr + this.intro.replace(/^[^\n]/gm, function(match, index) {
+        return index > 0 ? indentStr + match : match;
+      });
+    }
+    return this;
+  };
+  Bundle.prototype.prepend = function prepend(str) {
+    this.intro = str + this.intro;
+    return this;
+  };
+  Bundle.prototype.toString = function toString2() {
+    var this$1 = this;
+    var body = this.sources.map(function(source, i) {
+      var separator = source.separator !== void 0 ? source.separator : this$1.separator;
+      var str = (i > 0 ? separator : "") + source.content.toString();
+      return str;
+    }).join("");
+    return this.intro + body;
+  };
+  Bundle.prototype.isEmpty = function isEmpty() {
+    if (this.intro.length && this.intro.trim()) {
+      return false;
+    }
+    if (this.sources.some(function(source) {
+      return !source.content.isEmpty();
+    })) {
+      return false;
+    }
+    return true;
+  };
+  Bundle.prototype.length = function length() {
+    return this.sources.reduce(function(length2, source) {
+      return length2 + source.content.length();
+    }, this.intro.length);
+  };
+  Bundle.prototype.trimLines = function trimLines() {
+    return this.trim("[\\r\\n]");
+  };
+  Bundle.prototype.trim = function trim(charType) {
+    return this.trimStart(charType).trimEnd(charType);
+  };
+  Bundle.prototype.trimStart = function trimStart(charType) {
+    var rx = new RegExp("^" + (charType || "\\s") + "+");
+    this.intro = this.intro.replace(rx, "");
+    if (!this.intro) {
+      var source;
+      var i = 0;
+      do {
+        source = this.sources[i++];
+        if (!source) {
+          break;
+        }
+      } while (!source.content.trimStartAborted(charType));
+    }
+    return this;
+  };
+  Bundle.prototype.trimEnd = function trimEnd(charType) {
+    var rx = new RegExp((charType || "\\s") + "+$");
+    var source;
+    var i = this.sources.length - 1;
+    do {
+      source = this.sources[i--];
+      if (!source) {
+        this.intro = this.intro.replace(rx, "");
+        break;
+      }
+    } while (!source.content.trimEndAborted(charType));
+    return this;
+  };
+  MagicString2.Bundle = Bundle;
+  MagicString2.SourceMap = SourceMap;
+  MagicString2.default = MagicString2;
+  module2.exports = MagicString2;
+});
+
 // update-files.ts
 var fast_glob = __toModule(require_out4());
 var fs = __toModule(require("fs"));
 
 // src/transformCode.ts
 var traverse = __toModule(require_lib11());
-var generator3 = __toModule(require_lib4());
 
 // src/generateStyledComponent.ts
 var generator = __toModule(require_lib4());
@@ -52441,14 +53678,21 @@ var lodash2 = __toModule(require_lodash());
 var generator2 = __toModule(require_lib4());
 var types2 = __toModule(require_lib2());
 var lodash = __toModule(require_lodash());
-function genereateStyleBlock(cssDefinitions) {
-  const output = [];
+function generateStyleBlock(cssDefinitions) {
+  const output4 = [];
   for (const cssObject of cssDefinitions) {
     const key = cssObject.key.name;
-    const value = types2.isLiteral(cssObject.value) ? cssObject.value.value : "${" + generator2.default(cssObject.value).code + "}";
-    output.push({key, value});
+    let value;
+    if (types2.isTemplateLiteral(cssObject.value)) {
+      value = generator2.default(cssObject.value).code.slice(1, -1);
+    } else if (types2.isLiteral(cssObject.value)) {
+      value = cssObject.value.value;
+    } else {
+      value = "${" + generator2.default(cssObject.value).code + "}";
+    }
+    output4.push({key, value});
   }
-  return genereteCssProperties(output);
+  return genereteCssProperties(output4);
 }
 function genereteCssProperties(properties) {
   let stringifiedStyles = properties.map((prop) => {
@@ -52459,8 +53703,20 @@ ${stringifiedStyles.join(";\n")};
 `;
 }
 
+// src/output.ts
+function removeNode(output4, node, removeLine = true) {
+  const {start, end} = node;
+  if (start && end)
+    output4.remove(start - (removeLine ? 1 : 0), end);
+}
+function replaceNode(output4, node, text) {
+  const {start, end} = node;
+  if (start && end)
+    output4.overwrite(start, end, text);
+}
+
 // src/handleUseStylesDefinition.ts
-function handleUseStylesDefinition(useStylesPath) {
+function handleUseStylesDefinition(useStylesPath, output4) {
   const styledComponents = {};
   const classDefinitions = getClassDefinitions(useStylesPath.node);
   if (!classDefinitions) {
@@ -52475,11 +53731,11 @@ function handleUseStylesDefinition(useStylesPath) {
     const componentName = toUppercaseCamelCase(className);
     if (!types3.isObjectExpression(property.value))
       throw new Error(`useStyles for class ${className} includes non-object`);
-    const css = genereateStyleBlock(property.value.properties);
+    const css = generateStyleBlock(property.value.properties);
     const needsTheme = css.includes("theme");
     styledComponents[className] = {componentName, css, needsTheme};
   }
-  useStylesPath.remove();
+  removeNode(output4, useStylesPath.node);
   return styledComponents;
 }
 function getClassDefinitions(node) {
@@ -52503,7 +53759,7 @@ function toUppercaseCamelCase(name) {
 
 // src/handleClassesUsage.ts
 var types4 = __toModule(require_lib2());
-function handleClassesUsage(path, styledComponents) {
+function handleClassesUsage(path, styledComponents, output4) {
   const className = path.node.property.name;
   const styledComponent = styledComponents[className];
   const jsxElement = path.parentPath.parentPath.parent;
@@ -52511,7 +53767,7 @@ function handleClassesUsage(path, styledComponents) {
   if (styledComponent.elementType && styledComponent.elementType !== elementType) {
     throw new Error(`Class '${className}' used on elements with different types: ${styledComponent.elementType} and ${elementType}`);
   }
-  path.parentPath.parentPath.remove();
+  removeNode(output4, path.parentPath.parentPath.node, false);
   const classNameLikeComponentName = jsxElement.name.name === styledComponent.componentName;
   if (classNameLikeComponentName) {
     styledComponent.componentName = "Styled" + styledComponent.componentName;
@@ -52521,13 +53777,12 @@ function handleClassesUsage(path, styledComponents) {
     return;
   if (!types4.isJSXIdentifier(fullJsxElement.openingElement.name))
     return;
-  fullJsxElement.openingElement.name.name = styledComponent.componentName;
+  replaceNode(output4, fullJsxElement.openingElement.name, styledComponent.componentName);
   if (fullJsxElement.closingElement) {
     if (!types4.isJSXIdentifier(fullJsxElement.closingElement.name))
       return;
-    fullJsxElement.closingElement.name.name = styledComponent.componentName;
+    replaceNode(output4, fullJsxElement.closingElement.name, styledComponent.componentName);
   }
-  jsxElement.name.name = styledComponent.componentName;
   styledComponent.elementType = elementType;
 }
 
@@ -52552,28 +53807,31 @@ var babelOptions = {
 };
 
 // src/transformCode.ts
+var magic_string = __toModule(require_magic_string_cjs());
+var generator3 = __toModule(require_lib4());
 function transformCode_default(code) {
   const ast = parse_default(code);
+  const output4 = new magic_string.default(code);
   let styledComponents = {};
   traverse.default(ast, {
     VariableDeclaration: (path) => {
       if (getVariableDeclarationName(path.node) !== "useStyles")
         return;
-      styledComponents = handleUseStylesDefinition(path);
+      styledComponents = handleUseStylesDefinition(path, output4);
     },
     MemberExpression: (path) => {
       if (!types5.isIdentifier(path.node.object))
         return;
       if (path.node.object.name !== "classes")
         return;
-      handleClassesUsage(path, styledComponents);
+      handleClassesUsage(path, styledComponents, output4);
     },
     CallExpression: (path) => {
       if (!types5.isIdentifier(path.node.callee))
         return;
       if (path.node.callee.name !== "useStyles")
         return;
-      path.parentPath.parentPath.remove();
+      removeNode(output4, path.parentPath.parentPath.node);
     },
     ImportDeclaration: (path) => {
       if (path.node.source.value !== "@material-ui/core")
@@ -52585,15 +53843,17 @@ function transformCode_default(code) {
         return !["makeStyles", "createStyles", "Theme"].includes(importName);
       });
       const noImportsLeft = path.node.specifiers.length === 0;
-      if (noImportsLeft)
-        path.remove();
+      if (noImportsLeft) {
+        removeNode(output4, path.node);
+      } else {
+        replaceNode(output4, path.node, generator3.default(path.node).code);
+      }
     }
   });
   const noComponentWithTheme = Object.values(styledComponents).every(({needsTheme}) => !needsTheme);
-  const output = (noComponentWithTheme ? `import styled from 'styled-components'
+  return (noComponentWithTheme ? `import styled from 'styled-components'
 ` : `import styled, {css} from 'styled-components'
-`) + generator3.default(ast).code + "\n\n" + Object.values(styledComponents).map(generateStyledComponent).join("\n\n");
-  return output;
+`) + output4.toString() + "\n\n" + Object.values(styledComponents).map(generateStyledComponent).join("\n\n");
 }
 function getVariableDeclarationName(node) {
   return node.declarations[0].id?.name;
@@ -52607,6 +53867,10 @@ var tsxFiles = fast_glob.sync("**/**.tsx").map((path) => ({
 var filesWithUseStyles = tsxFiles.filter(({content}) => content.includes("useStyles"));
 filesWithUseStyles.forEach(({path, content}) => {
   console.log("Changing", path, "...");
-  fs.writeFileSync(path, transformCode_default(content));
+  try {
+    fs.writeFileSync(path, transformCode_default(content));
+  } catch (e) {
+    console.error("Failed");
+  }
   console.log("Done");
 });

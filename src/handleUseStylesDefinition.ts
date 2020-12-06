@@ -10,7 +10,7 @@ import {
 } from '@babel/types'
 import {camelCase} from 'lodash'
 import MagicString from 'magic-string'
-import genereateStyleBlock from './generateStyleBlock'
+import generateStyleBlock from './generateStyleBlock'
 import {StyledComponent} from './generateStyledComponent'
 import {removeNode} from './output'
 
@@ -41,7 +41,7 @@ export default function handleUseStylesDefinition(
     if (!isObjectExpression(property.value))
       throw new Error(`useStyles for class ${className} includes non-object`)
 
-    const css = genereateStyleBlock(property.value.properties)
+    const css = generateStyleBlock(property.value.properties)
     const needsTheme = css.includes('theme')
     styledComponents[className] = {componentName, css, needsTheme}
   }

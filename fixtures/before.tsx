@@ -3,6 +3,7 @@ import {Theme, makeStyles, createStyles, Button} from '@material-ui/core'
 import {DrawerToggleButton} from './lib'
 
 const someGlobal = '20px'
+const loginBackground = 'https://cool.jpg'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -11,7 +12,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     second: {
       backgroundColor: 'green',
-      width: '100%'
+      width: '100%',
+      backgroundImage: `url(${loginBackground})`,
     },
     third: {
       fontSize: '12px',

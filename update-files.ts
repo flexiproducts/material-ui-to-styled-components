@@ -15,6 +15,10 @@ const filesWithUseStyles = tsxFiles.filter(({content}) =>
 
 filesWithUseStyles.forEach(({path, content}) => {
   console.log('Changing', path, '...')
-  writeFileSync(path, transformCode(content))
+  try {
+    writeFileSync(path, transformCode(content))
+  } catch (e) {
+    console.error('Failed')
+  }
   console.log('Done')
 })

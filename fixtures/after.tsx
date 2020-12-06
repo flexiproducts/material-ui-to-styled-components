@@ -4,6 +4,7 @@ import { Button } from '@material-ui/core';
 import {DrawerToggleButton} from './lib'
 
 const someGlobal = '20px'
+const loginBackground = 'https://cool.jpg'
 
 
 function App() {
@@ -34,6 +35,7 @@ const First = styled.div`
 const Second = styled.span`
   background-color: green;
   width: 100%;
+  background-image: url(${loginBackground});
 `;
 
 const Third = styled(Button)`
