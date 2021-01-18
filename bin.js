@@ -53660,6 +53660,9 @@ var generator = __toModule(require_lib4());
 var types = __toModule(require_lib2());
 function generateStyledComponent(styledComponent) {
   const {componentName, css, elementType, needsTheme} = styledComponent;
+  if (!elementType) {
+    return "";
+  }
   const isCustomComponent = elementType[0] !== elementType[0].toLowerCase();
   const styledFunction = isCustomComponent ? types.callExpression(types.identifier("styled"), [types.identifier(elementType)]) : types.memberExpression(types.identifier("styled"), types.identifier(elementType));
   if (needsTheme) {
@@ -53857,7 +53860,7 @@ import styled from 'styled-components'`);
   return output4.toString() + "\n\n" + Object.values(styledComponents).map(generateStyledComponent).join("\n\n");
 }
 function getVariableDeclarationName(node) {
-  return node.declarations[0].id?.name;
+  return node?.declarations?.[0]?.id?.name;
 }
 
 // update-files.ts
@@ -53870,8 +53873,9 @@ filesWithUseStyles.forEach(({path, content}) => {
   console.log("Changing", path, "...");
   try {
     fs.writeFileSync(path, transformCode_default(content));
+    console.log("Done");
   } catch (e) {
+    console.log(e);
     console.error("Failed");
   }
-  console.log("Done");
 });

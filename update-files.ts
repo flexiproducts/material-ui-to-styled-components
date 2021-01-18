@@ -17,8 +17,9 @@ filesWithUseStyles.forEach(({path, content}) => {
   console.log('Changing', path, '...')
   try {
     writeFileSync(path, transformCode(content))
+    console.log('Done')
   } catch (e) {
+    console.log(e)
     console.error('Failed')
   }
-  console.log('Done')
 })

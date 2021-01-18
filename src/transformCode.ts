@@ -72,5 +72,5 @@ export default function (code: string) {
 }
 
 function getVariableDeclarationName(node) {
-  return (<any>node.declarations[0].id)?.name
+  return (<any>node?.declarations?.[0]?.id)?.name
 }

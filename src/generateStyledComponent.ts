@@ -21,6 +21,10 @@ export default function generateStyledComponent(
   styledComponent: StyledComponent
 ): string {
   const {componentName, css, elementType, needsTheme} = styledComponent
+  if (!elementType) {
+    // unused commponent
+    return ''
+  }
   const isCustomComponent = elementType[0] !== elementType[0].toLowerCase()
   const styledFunction = isCustomComponent
     ? callExpression(identifier('styled'), [identifier(elementType)]) // styled(Button)
