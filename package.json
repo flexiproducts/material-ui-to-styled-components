@@ -7,9 +7,9 @@
     "change-styled": "bin.js"
   },
   "scripts": {
-    "start": "node -r @swc-node/register index.ts",
+    "start": "node -r @swc-node/register test.ts",
     "test": "npm start > tmp-output.tsx && git diff --no-index -- fixtures/after.tsx tmp-output.tsx && rm tmp-output.tsx && echo 'No differences in output detected'",
-    "build": "esbuild update-files.ts --bundle --platform=node --outfile=bin.js"
+    "build": "esbuild update-files.ts --bundle --platform=node --sourcemap=inline --outfile=bin.js"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +32,7 @@
     "@types/node": "^14.14.10",
     "esbuild": "^0.8.19",
     "eslint": "^7.14.0",
+    "source-map-support": "^0.5.19",
     "ts-node": "^9.1.0",
     "typescript": "^4.1.2"
   }

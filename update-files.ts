@@ -4,6 +4,8 @@ import {sync as glob} from 'fast-glob'
 import {readFileSync, writeFileSync} from 'fs'
 import transformCode from './src/transformCode'
 
+require('source-map-support').install()
+
 const tsxFiles = glob('**/**.tsx').map((path) => ({
   path,
   content: readFileSync(path, 'utf-8')
